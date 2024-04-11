@@ -1,12 +1,9 @@
-package com.softcatcode.vkclient.presentation.viewModels
+package com.softcatcode.vkclient.presentation.home.auth
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.softcatcode.vkclient.domain.entities.states.AuthState
-import com.vk.api.sdk.VK
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthenticationResult

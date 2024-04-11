@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.ui.compose
+package com.softcatcode.vkclient.presentation.home.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

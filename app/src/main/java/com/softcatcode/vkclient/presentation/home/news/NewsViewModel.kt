@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.viewModels
+package com.softcatcode.vkclient.presentation.home.news
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,7 +7,6 @@ import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
-import com.softcatcode.vkclient.domain.entities.states.NewsScreenState
 
 class NewsViewModel: ViewModel() {
 

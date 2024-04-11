@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.activities
+package com.softcatcode.vkclient.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -6,11 +6,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.softcatcode.vkclient.domain.entities.states.AuthState
-import com.softcatcode.vkclient.presentation.ui.compose.LoginScreen
-import com.softcatcode.vkclient.presentation.ui.compose.VkMainScreen
+import com.softcatcode.vkclient.presentation.home.auth.AuthState
+import com.softcatcode.vkclient.presentation.home.auth.AuthViewModel
+import com.softcatcode.vkclient.presentation.home.auth.LoginScreen
+import com.softcatcode.vkclient.presentation.main.VkMainScreen
 import com.softcatcode.vkclient.presentation.ui.theme.VkClientTheme
-import com.softcatcode.vkclient.presentation.viewModels.AuthViewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
 

@@ -1,10 +1,11 @@
-package com.softcatcode.vkclient.navigation
+package com.softcatcode.vkclient.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.presentation.home.homeScreenNavGraph
 
 @Composable
 fun AppNavGraph(

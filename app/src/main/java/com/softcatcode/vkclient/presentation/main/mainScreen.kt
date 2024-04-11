@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.ui.compose
+package com.softcatcode.vkclient.presentation.main
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.softcatcode.vkclient.navigation.AppNavGraph
-import com.softcatcode.vkclient.navigation.NavigationState
-import com.softcatcode.vkclient.navigation.rememberNavigationState
+import com.softcatcode.vkclient.presentation.home.BottomNavigationItem
+import com.softcatcode.vkclient.presentation.home.HomeContent
+import com.softcatcode.vkclient.presentation.navigation.AppNavGraph
+import com.softcatcode.vkclient.presentation.navigation.NavigationState
+import com.softcatcode.vkclient.presentation.home.comments.CommentScreen
 
 @Composable
 fun VkBottomNavigationBar(navState: NavigationState) {
@@ -47,7 +49,7 @@ fun VkBottomNavigationBar(navState: NavigationState) {
 
 @Composable
 fun VkMainScreen() {
-    val navState = rememberNavigationState()
+    val navState = NavigationState.rememberNavigationState()
 
     Scaffold(
         bottomBar = { VkBottomNavigationBar(navState) }

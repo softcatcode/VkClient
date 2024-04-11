@@ -1,13 +1,12 @@
-package com.softcatcode.vkclient.navigation
+package com.softcatcode.vkclient.presentation.home
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.softcatcode.vkclient.domain.entities.PostData
-import com.google.gson.Gson
+import com.softcatcode.vkclient.presentation.navigation.Screen
 
 fun NavGraphBuilder.homeScreenNavGraph(
     newsScreenContent: @Composable () -> Unit,

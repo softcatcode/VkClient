@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.ui.compose
+package com.softcatcode.vkclient.presentation.home
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -16,9 +16,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsType
-import com.softcatcode.vkclient.domain.entities.states.HomeScreenState
-import com.softcatcode.vkclient.domain.entities.states.NewsScreenState
-import com.softcatcode.vkclient.presentation.viewModels.NewsViewModel
+import com.softcatcode.vkclient.presentation.home.news.NewsScreenState
+import com.softcatcode.vkclient.presentation.home.news.PostScreen
+import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
 
 @Composable
 fun RowScope.BottomNavigationItem(

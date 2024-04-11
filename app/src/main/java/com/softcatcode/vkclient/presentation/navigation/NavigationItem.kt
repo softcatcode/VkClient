@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.domain.entities
+package com.softcatcode.vkclient.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
@@ -6,7 +6,6 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.softcatcode.vkclient.R
-import com.softcatcode.vkclient.navigation.Screen
 
 sealed class NavigationItem(
     val screen: Screen,

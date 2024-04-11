@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.activities
+package com.softcatcode.vkclient.presentation.samples
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

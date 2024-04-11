@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.ui.compose
+package com.softcatcode.vkclient.presentation.home.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -46,7 +46,6 @@ import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
-import com.softcatcode.vkclient.presentation.viewModels.NewsViewModel
 
 @Composable
 private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerRadius: Dp = 0.dp) {

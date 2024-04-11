@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.ui.compose
+package com.softcatcode.vkclient.presentation.home.comments
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,9 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
-import com.softcatcode.vkclient.domain.entities.states.CommentsScreenState
-import com.softcatcode.vkclient.presentation.viewModels.CommentsViewModel
-import com.softcatcode.vkclient.presentation.viewModels.factories.CommentsViewModelFactory
 
 @Composable
 fun CommentItem(

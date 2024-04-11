@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.domain.entities.states
+package com.softcatcode.vkclient.presentation.home.comments
 
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.Comment

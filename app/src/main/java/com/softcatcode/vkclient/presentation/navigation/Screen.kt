@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.navigation
+package com.softcatcode.vkclient.presentation.navigation
 
 import android.net.Uri
 import com.softcatcode.vkclient.domain.entities.PostData
@@ -30,6 +30,6 @@ sealed class Screen(
         const val ROUTE_FAVOURITE = "favourite"
         const val ROUTE_PROFILE = "profile"
         const val ROUTE_HOME = "home"
-        const val ROUTE_COMMENTS = "${Comments.ROUTE_FOR_ARGS}/{${KEY_POST_JSON}}"
+        const val ROUTE_COMMENTS = "${Comments.ROUTE_FOR_ARGS}/{$KEY_POST_JSON}"
     }
 }

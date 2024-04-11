@@ -1,9 +1,8 @@
-package com.softcatcode.vkclient.presentation.viewModels.factories
+package com.softcatcode.vkclient.presentation.home.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.softcatcode.vkclient.domain.entities.PostData
-import com.softcatcode.vkclient.presentation.viewModels.CommentsViewModel
 
 class CommentsViewModelFactory(
     private val post: PostData
