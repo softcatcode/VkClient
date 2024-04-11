@@ -12,6 +12,9 @@ composeLiveDataTool = "1.6.5"
 composeNavigation = "2.7.7"
 gsonVersion = "2.10.1"
 vkApiVersion = "4.0.1"
+retrofitVersion = "2.9.0"
+okHttpLoggerVersion = "4.9.3"
+coilVersion = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +37,9 @@ androidx-viewmodel-lifecycle = { group = "androidx.lifecycle", name = "lifecycle
 com-google-gson = { group = "com.google.code.gson", name = "gson", version.ref="gsonVersion" }
 com-vk-core = { group = "com.vk", name = "android-sdk-core", version.ref="vkApiVersion" }
 com-vk-api = { group = "com.vk", name = "android-sdk-api", version.ref="vkApiVersion" }
+com-squareapp-retrofit = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofitVersion" }
+com-squareapp-okhttp = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okHttpLoggerVersion" }
+io-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

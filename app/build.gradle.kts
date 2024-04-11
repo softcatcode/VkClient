@@ -66,7 +66,9 @@ dependencies {
     implementation(libs.com.google.gson)
     implementation(libs.com.vk.core)
     implementation(libs.com.vk.api)
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation(libs.com.squareapp.retrofit)
+    implementation(libs.com.squareapp.okhttp)
+    implementation(libs.io.coil)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
