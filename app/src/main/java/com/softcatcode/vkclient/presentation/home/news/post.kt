@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
@@ -58,12 +59,12 @@ private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerR
             modifier = Modifier.padding(2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight(0.75f)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.background),
-                painter = painterResource(id = post.avatarResId),
+                model = post.contentImageUrl,
                 contentDescription = "",
                 contentScale = ContentScale.Fit
             )
@@ -189,8 +190,8 @@ fun PostCard(
                     .weight(1.5f)
                     .padding(2.dp)
             )
-            Image(
-                painter = painterResource(id = post.contentImageResId),
+            AsyncImage(
+                model = post.contentImageUrl,
                 contentDescription = "",
                 modifier = Modifier
                     .weight(7f)

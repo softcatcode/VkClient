@@ -107,7 +107,7 @@ fun CommentList(
 @Composable
 fun CommentTopBar(
     modifier: Modifier = Modifier,
-    post: PostData = PostData(),
+    post: PostData,
     onBackPressed: () -> Unit = {}
 ) {
     val label = stringResource(id = R.string.comment_top_bar_title)

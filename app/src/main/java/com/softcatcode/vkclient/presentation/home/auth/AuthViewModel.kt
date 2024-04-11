@@ -1,6 +1,7 @@
 package com.softcatcode.vkclient.presentation.home.auth
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +10,7 @@ import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthenticationResult
 
 class AuthViewModel(
-    private val application: Application
+    application: Application
 ): AndroidViewModel(application) {
 
     private val _state = MutableLiveData<AuthState>()

@@ -5,8 +5,12 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("newsfeed.getRecomended?v=5.131")
+    @GET("newsfeed.getRecommended?v=$VERSION")
     suspend fun getRecommendations(
         @Query("access_token") token: String
     ): NewsFeedResponseDto
+
+    companion object {
+        private const val VERSION = "5.199"
+    }
 }
