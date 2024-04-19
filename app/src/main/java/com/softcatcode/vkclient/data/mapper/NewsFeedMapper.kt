@@ -6,6 +6,9 @@ import com.softcatcode.vkclient.data.model.PostDto
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.absoluteValue
 
 class NewsFeedMapper {
@@ -14,7 +17,7 @@ class NewsFeedMapper {
         PostData(
             id = id,
             communityName = group?.name ?: "",
-            publicationDate = date.toString(),
+            publicationDate = mapLongToDate(date),
             avatarUrl = group?.imgUrl ?: "",
             contentImageUrl = attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
             contentText = text,
@@ -25,6 +28,11 @@ class NewsFeedMapper {
                 StatisticsItem(StatisticsType.Comment, comments.count)
             )
         )
+    }
+
+    private fun mapLongToDate(seconds: Long): String {
+        val date = Date(seconds * 1000)
+        return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
     }
 
     fun mapResponseToPosts(responseDto: NewsFeedResponseDto): List<PostData> {

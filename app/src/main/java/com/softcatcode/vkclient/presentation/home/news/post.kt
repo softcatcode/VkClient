@@ -1,7 +1,6 @@
 package com.softcatcode.vkclient.presentation.home.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -47,6 +47,7 @@ import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import com.softcatcode.vkclient.presentation.ui.theme.DarkRed
 
 @Composable
 private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerRadius: Dp = 0.dp) {
@@ -64,7 +65,7 @@ private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerR
                     .fillMaxHeight(0.75f)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.background),
-                model = post.contentImageUrl,
+                model = post.avatarUrl,
                 contentDescription = "",
                 contentScale = ContentScale.Fit
             )
@@ -98,19 +99,24 @@ private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerR
 
 @Composable
 fun StatisticsItemView(
-    modifier: Modifier = Modifier,
     item: StatisticsItem,
-    onClick: (StatisticsType) -> Unit
+    imageResId: Int,
+    onClick: (StatisticsType) -> Unit,
+    tint: Color = MaterialTheme.colorScheme.onSecondary
 ) {
-    Image(
-        modifier = modifier.clickable { onClick(item.type) },
-        painter = painterResource(id = StatisticsItem.matchDrawableId(item.type)),
+    Icon(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(5.dp)
+            .clickable { onClick(item.type) }
+            .size(20.dp),
+        painter = painterResource(id = imageResId),
         contentDescription = "",
-        contentScale = ContentScale.FillHeight
+        tint = tint
     )
     Spacer(modifier = Modifier.width(5.dp))
     Text(
-        text = item.count.toString(),
+        text = formatCount(item.count),
         fontSize = 14.sp,
         color = MaterialTheme.colorScheme.onPrimary
     )
@@ -130,33 +136,46 @@ private fun PostStatistics(
         val rowModifier = Modifier
             .weight(1f)
             .fillMaxHeight()
-            .background(MaterialTheme.colorScheme.background)
-        val itemModifier = Modifier
-            .fillMaxHeight()
-            .padding(5.dp)
+            .padding(end = 15.dp)
         Row(
             modifier = rowModifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val item = statistics.first()
-            StatisticsItemView(
-                item = item,
-                modifier = itemModifier,
-                onClick = { onStatisticsItemClickListener(post, item) }
-            )
+            statistics.find { it.type == StatisticsType.View }?.let { item ->
+                StatisticsItemView(
+                    item = item,
+                    imageResId = R.drawable.ic_views_count,
+                    onClick = { onStatisticsItemClickListener(post, item) }
+                )
+            }
         }
         Row(
             modifier = rowModifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            for (i in 1 until statistics.size) {
-                val item = statistics[i]
+            statistics.find { it.type == StatisticsType.Like }?.let { item ->
                 StatisticsItemView(
                     item = item,
-                    modifier = itemModifier,
+                    imageResId = if (post.liked) R.drawable.ic_like_set else R.drawable.ic_like,
+                    onClick = { onStatisticsItemClickListener(post, item) },
+                    tint = if (post.liked) DarkRed else MaterialTheme.colorScheme.onSecondary
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            statistics.find { it.type == StatisticsType.Share }?.let { item ->
+                StatisticsItemView(
+                    item = item,
+                    imageResId = R.drawable.ic_share,
                     onClick = { onStatisticsItemClickListener(post, item) }
                 )
-                Spacer(modifier = Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            statistics.find { it.type == StatisticsType.Comment }?.let { item ->
+                StatisticsItemView(
+                    item = item,
+                    imageResId = R.drawable.ic_comment,
+                    onClick = { onStatisticsItemClickListener(post, item) }
+                )
             }
         }
     }
@@ -187,7 +206,7 @@ fun PostCard(
                 text = post.contentText,
                 fontSize = 16.sp,
                 modifier = Modifier
-                    .weight(1.5f)
+                    .weight(2f)
                     .padding(2.dp)
             )
             AsyncImage(
@@ -200,7 +219,7 @@ fun PostCard(
                 contentScale = ContentScale.FillBounds
             )
             PostStatistics(
-                modifier = Modifier.weight(1.2f),
+                modifier = Modifier.height(30.dp),
                 statistics = post.statistics,
                 post = post,
                 onStatisticsItemClickListener = onStatisticsItemClickListener
@@ -261,11 +280,21 @@ fun PostScreen(
                 PostCard(
                     modifier = Modifier
                         .padding(top = 10.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .height(500.dp),
                     post = post,
                     onStatisticsItemClickListener = onStatisticsItemClickListener
                 )
             }
         }
     }
+}
+
+private fun formatCount(count: Int): String{
+    return if (count > 100_000)
+        String.format("%sK", (count / 1000))
+    else if (count > 1000)
+        String.format("%.1fK", (count / 1000f))
+    else
+        count.toString()
 }

@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import com.softcatcode.vkclient.R
 import com.google.gson.Gson
 import kotlinx.android.parcel.Parcelize
+import kotlin.random.Random
 
 @Parcelize
 data class PostData(
@@ -15,7 +16,8 @@ data class PostData(
     val avatarUrl: String,
     val contentImageUrl: String?,
     val contentText: String,
-    val statistics: List<StatisticsItem>
+    val statistics: List<StatisticsItem>,
+    val liked: Boolean = Random.nextBoolean()
 ): Parcelable {
     companion object {
 

@@ -32,7 +32,6 @@ class AuthViewModel(
             is VKAuthenticationResult.Success -> _state.value = AuthState.Authorized
             is VKAuthenticationResult.Failed -> _state.value = AuthState.NotAuthorized
         }
-        val storage = VKPreferencesKeyValueStorage(getApplication())
     }
 
 }
