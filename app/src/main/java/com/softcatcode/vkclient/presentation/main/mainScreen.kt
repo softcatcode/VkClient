@@ -57,7 +57,7 @@ fun VkMainScreen() {
         AppNavGraph(
             navController = navState.navController,
             newsScreenContent = {
-                HomeContent(paddingValues = it) { post ->
+                HomeContent(paddingValues = it) { post, _ ->
                     navState.navigateToComments(post)
                 }
             },

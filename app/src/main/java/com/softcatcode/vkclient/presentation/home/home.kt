@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
 import com.softcatcode.vkclient.presentation.home.news.NewsScreenState
 import com.softcatcode.vkclient.presentation.home.news.PostScreen
@@ -56,7 +57,7 @@ fun RowScope.BottomNavigationItem(
 @Composable
 fun HomeContent(
     paddingValues: PaddingValues,
-    onCommentClickListener: (PostData) -> Unit
+    onCommentClickListener: (PostData, StatisticsItem) -> Unit
 ) {
     val viewModel: NewsViewModel = viewModel()
     val state = viewModel.state.observeAsState(HomeScreenState.Initial)
@@ -66,12 +67,13 @@ fun HomeContent(
         is NewsScreenState.Posts -> PostScreen(
             viewModel,
             currentState.postList,
-            paddingValues,
+            paddingValues
         ) { post, statItem ->
-            if (statItem.type == StatisticsType.Comment)
-                onCommentClickListener(post)
-            else
-                viewModel.updateStatistics(post.id, statItem.type)
+            when (statItem.type) {
+                StatisticsType.Comment -> onCommentClickListener(post, statItem)
+                StatisticsType.Like -> viewModel.changeLikeStatus(post)
+                else -> viewModel.updateStatistics(post.id, statItem.type)
+            }
         }
 
         is HomeScreenState.Initial -> {}

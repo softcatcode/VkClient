@@ -15,14 +15,14 @@ interface ApiService {
     suspend fun like(
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
-        @Query("post_id") postId: Long
+        @Query("item_id") postId: Long
     ): LikeCountResponseDto
 
     @GET("likes.delete?v=$VERSION&type=post")
     suspend fun dislike(
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
-        @Query("post_id") postId: Long
+        @Query("item_id") postId: Long
     ): LikeCountResponseDto
 
     companion object {
