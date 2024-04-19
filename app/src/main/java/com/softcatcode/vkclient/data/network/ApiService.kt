@@ -1,6 +1,7 @@
 package com.softcatcode.vkclient.data.network
 
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.model.TokenResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

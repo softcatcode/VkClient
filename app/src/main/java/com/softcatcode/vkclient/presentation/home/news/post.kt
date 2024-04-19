@@ -261,8 +261,7 @@ fun PostScreen(
                 PostCard(
                     modifier = Modifier
                         .padding(top = 10.dp)
-                        .fillMaxWidth()
-                        .height(300.dp),
+                        .fillMaxWidth(),
                     post = post,
                     onStatisticsItemClickListener = onStatisticsItemClickListener
                 )

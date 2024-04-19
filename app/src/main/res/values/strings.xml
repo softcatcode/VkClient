@@ -7,5 +7,5 @@
     <string name="comment_top_bar_title">Comment to post</string>
     <string name="login_btn_text">Log in</string>
 
-    <integer name="com_vk_sdk_AppId">51899684</integer>
+    <integer name="com_vk_sdk_AppId">51901563</integer>
 </resources>

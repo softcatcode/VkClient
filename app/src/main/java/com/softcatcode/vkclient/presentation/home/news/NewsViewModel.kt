@@ -1,6 +1,7 @@
 package com.softcatcode.vkclient.presentation.home.news
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -68,6 +69,10 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
             val storage = VKPreferencesKeyValueStorage(getApplication())
             val token = VKAccessToken.restore(storage) ?: return@launch
             val response = ApiFactory.apiService.getRecommendations(token.accessToken)
+            Log.i("mumu", "secret: ${token.secret}")
+            Log.i("mumu", "email: ${token.email}")
+            Log.i("mumu", "access_token: ${token.accessToken}")
+
             val postList = mapper.mapResponseToPosts(response)
             withContext(Dispatchers.Main) {
                 _state.value = NewsScreenState.Posts(postList)

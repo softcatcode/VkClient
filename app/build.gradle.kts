@@ -78,3 +78,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+//YSRIXOqZ52rXg7ws4wME
+// 0c70b3070c70b3070c70b3077a0f67477c00c700c70b3076a698334625d3b99e012cd0e
