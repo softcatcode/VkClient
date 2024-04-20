@@ -65,9 +65,10 @@ fun HomeContent(
     when (val currentState = state.value) {
 
         is NewsScreenState.Posts -> PostScreen(
-            viewModel,
-            currentState.postList,
-            paddingValues
+            viewModel = viewModel,
+            posts = currentState.postList,
+            paddingValues = paddingValues,
+            nextDataLoading = currentState.nextLoading
         ) { post, statItem ->
             when (statItem.type) {
                 StatisticsType.Comment -> onCommentClickListener(post, statItem)

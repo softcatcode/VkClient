@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +34,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +50,7 @@ import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import com.softcatcode.vkclient.presentation.ui.theme.DarkBlue
 import com.softcatcode.vkclient.presentation.ui.theme.DarkRed
 
 @Composable
@@ -253,7 +257,8 @@ fun PostScreen(
     viewModel: NewsViewModel,
     posts: List<PostData>,
     paddingValues: PaddingValues,
-    onStatisticsItemClickListener: (PostData, StatisticsItem) -> Unit
+    nextDataLoading: Boolean,
+    onStatisticsItemClickListener: (PostData, StatisticsItem) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -285,6 +290,23 @@ fun PostScreen(
                     post = post,
                     onStatisticsItemClickListener = onStatisticsItemClickListener
                 )
+            }
+        }
+        item {
+            if (nextDataLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = DarkBlue)
+                }
+            } else {
+                SideEffect {
+                    viewModel.loadNextRecommendations()
+                }
             }
         }
     }

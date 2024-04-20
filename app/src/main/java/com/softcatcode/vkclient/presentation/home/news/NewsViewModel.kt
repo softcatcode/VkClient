@@ -70,6 +70,14 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun loadNextRecommendations() {
+        _state.value = NewsScreenState.Posts(
+            postList = repository.posts,
+            nextLoading = true
+        )
+        loadRecommendations()
+    }
+
     fun changeLikeStatus(post: PostData) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.changeLikeStatus(post)

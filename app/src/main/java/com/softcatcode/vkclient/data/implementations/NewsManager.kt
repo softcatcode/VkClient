@@ -21,15 +21,17 @@ class NewsManager(application: Application): NewsManagerInterface {
     val posts: List<PostData>
         get() = _posts.toList()
 
+    private var nextFrom: String? = null
+
     private fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 
-//    override suspend fun loadRecommendations() = _posts.apply {
-//        val response = apiService.getRecommendations(token())
-//        addAll(mapper.mapResponseToPosts(response))
-//    }
-
     override suspend fun loadRecommendations(): List<PostData> {
-        val response = apiService.getRecommendations(token())
+        if (nextFrom == null && posts.isNotEmpty())
+            return posts
+        val response = nextFrom?.let {
+            apiService.getRecommendations(token(), it)
+        } ?: apiService.getRecommendations(token())
+        nextFrom = response.newsFeedContent.nextFrom
         _posts.addAll(mapper.mapResponseToPosts(response))
         return posts
     }

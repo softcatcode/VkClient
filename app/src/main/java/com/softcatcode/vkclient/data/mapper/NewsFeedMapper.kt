@@ -23,7 +23,7 @@ class NewsFeedMapper {
             avatarUrl = group?.imgUrl ?: "",
             contentImageUrl = attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
             contentText = text,
-            liked = isFavourite,
+            liked = likes.userLikes == 1,
             statistics = listOf(
                 StatisticsItem(StatisticsType.View, views.count),
                 StatisticsItem(StatisticsType.Like, likes.count),
