@@ -265,7 +265,7 @@ fun PostScreen(
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(paddingValues),
-        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 72.dp),
+        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 40.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(

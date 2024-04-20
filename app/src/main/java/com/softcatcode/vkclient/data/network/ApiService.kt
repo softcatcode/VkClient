@@ -1,5 +1,6 @@
 package com.softcatcode.vkclient.data.network
 
+import android.os.Build.VERSION
 import com.softcatcode.vkclient.data.model.LikeCountResponseDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
 import retrofit2.http.GET
@@ -30,6 +31,13 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long
     ): LikeCountResponseDto
+
+    @GET("newsfeed.ignoreItem?v=$VERSION&type=wall")
+    suspend fun ignorePost(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("item_id") itemId: Long
+    )
 
     companion object {
         private const val VERSION = "5.199"

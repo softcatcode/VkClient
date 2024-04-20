@@ -36,6 +36,12 @@ class NewsManager(application: Application): NewsManagerInterface {
         return posts
     }
 
+    override suspend fun ignorePost(id: Long) {
+        val post = _posts.find { it.id == id } ?: return
+        _posts.remove(post)
+        apiService.ignorePost(token(), post.communityId, post.id)
+    }
+
     override suspend fun changeLikeStatus(post: PostData) {
         val newLikeCount = if (post.liked)
             apiService.dislike(token(), post.communityId, post.id).likeCount.count

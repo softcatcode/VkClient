@@ -51,14 +51,12 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun removePost(id: Long) {
-        val currentState = state.value
-        if (currentState !is NewsScreenState.Posts)
-            return
-
-        val postList = currentState.postList.toMutableList().apply {
-            removeAll { it.id == id }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.ignorePost(id)
+            withContext(Dispatchers.Main) {
+                _state.value = NewsScreenState.Posts(repository.posts)
+            }
         }
-        _state.value = NewsScreenState.Posts(postList)
     }
 
     fun loadRecommendations() {
