@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 class NewsViewModel(application: Application): AndroidViewModel(application) {
 
-    private val _state = MutableLiveData<NewsScreenState>(NewsScreenState.Initial)
+    private val _state = MutableLiveData<NewsScreenState>(NewsScreenState.Loading)
     val state: LiveData<NewsScreenState> = _state
 
     private val repository = NewsManager(getApplication())
