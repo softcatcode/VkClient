@@ -105,14 +105,14 @@ private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerR
 fun StatisticsItemView(
     item: StatisticsItem,
     imageResId: Int,
-    onClick: (StatisticsType) -> Unit,
+    onClick: ((StatisticsType) -> Unit)? = null,
     tint: Color = MaterialTheme.colorScheme.onSecondary
 ) {
+    val modifier = if (onClick == null) Modifier else Modifier.clickable { onClick(item.type) }
     Icon(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .padding(5.dp)
-            .clickable { onClick(item.type) }
             .size(20.dp),
         painter = painterResource(id = imageResId),
         contentDescription = "",
@@ -146,11 +146,7 @@ private fun PostStatistics(
             verticalAlignment = Alignment.CenterVertically
         ) {
             statistics.find { it.type == StatisticsType.View }?.let { item ->
-                StatisticsItemView(
-                    item = item,
-                    imageResId = R.drawable.ic_views_count,
-                    onClick = { onStatisticsItemClickListener(post, item) }
-                )
+                StatisticsItemView(item, R.drawable.ic_views_count)
             }
         }
         Row(

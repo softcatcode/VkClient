@@ -78,7 +78,7 @@ fun HomeContent(
             when (statItem.type) {
                 StatisticsType.Comment -> onCommentClickListener(post, statItem)
                 StatisticsType.Like -> viewModel.changeLikeStatus(post)
-                else -> viewModel.updateStatistics(post.id, statItem.type)
+                else -> {}
             }
         }
 

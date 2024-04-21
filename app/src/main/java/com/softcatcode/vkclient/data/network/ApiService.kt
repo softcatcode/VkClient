@@ -1,8 +1,8 @@
 package com.softcatcode.vkclient.data.network
 
-import android.os.Build.VERSION
 import com.softcatcode.vkclient.data.model.LikeCountResponseDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
+import com.sumin.vknewsclient.data.model.CommentsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -38,6 +38,13 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") itemId: Long
     )
+
+    @GET("wall.getComments?v=$VERSION&extended=1&fields=photo_100")
+    suspend fun loadComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long
+    ): CommentsResponseDto
 
     companion object {
         private const val VERSION = "5.199"

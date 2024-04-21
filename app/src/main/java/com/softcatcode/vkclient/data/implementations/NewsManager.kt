@@ -3,6 +3,7 @@ package com.softcatcode.vkclient.data.implementations
 import android.app.Application
 import com.softcatcode.vkclient.data.mapper.NewsFeedMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
+import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
@@ -53,5 +54,10 @@ class NewsManager(application: Application): NewsManagerInterface {
         }
         val index = posts.indexOfFirst { post.id == it.id }
         _posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
+    }
+
+    override suspend fun getComments(post: PostData): List<Comment> {
+        val response = apiService.loadComments(token(), post.communityId, post.id)
+        return mapper.mapResponseToComments(response)
     }
 }

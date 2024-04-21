@@ -1,6 +1,6 @@
 package com.softcatcode.vkclient.presentation.home.comments
 
-import androidx.compose.foundation.Image
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.softcatcode.vkclient.domain.entities.Comment
@@ -30,26 +30,30 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
 
 @Composable
 fun CommentItem(
     modifier: Modifier = Modifier,
-    comment: Comment = Comment(id = 1)
+    comment: Comment
 ) {
     Row(
         modifier = modifier
     ) {
-        Image(
+        AsyncImage(
+            model = comment.authorAvatarUrl,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape),
-            painter = painterResource(id = comment.authorAvatarId),
-            contentDescription = null
+            contentDescription = null,
+            contentScale = ContentScale.Crop
         )
         Column(
             modifier = Modifier
@@ -107,10 +111,8 @@ fun CommentList(
 @Composable
 fun CommentTopBar(
     modifier: Modifier = Modifier,
-    post: PostData,
     onBackPressed: () -> Unit = {}
 ) {
-    val label = stringResource(id = R.string.comment_top_bar_title)
     TopAppBar(
         modifier = modifier,
         title = {
@@ -120,7 +122,7 @@ fun CommentTopBar(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "$label ${post.id}",
+                    text = stringResource(id = R.string.comment_top_bar_title),
                     fontSize = 25.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary
@@ -147,7 +149,10 @@ fun CommentScreen(
     onBackPressed: () -> Unit
 ) {
     val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(post)
+        factory = CommentsViewModelFactory(
+            post,
+            LocalContext.current.applicationContext as Application
+        )
     )
     val state = viewModel.state.observeAsState(CommentsScreenState.Initial)
     val currentState = state.value
@@ -162,7 +167,6 @@ fun CommentScreen(
                         .height(50.dp)
                         .fillMaxWidth()
                         .padding(start = 10.dp),
-                    post = currentState.post,
                     onBackPressed = onBackPressed
                 )
             }
@@ -171,7 +175,8 @@ fun CommentScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
-                    .padding(it),
+                    .padding(it)
+                    .padding(start = 5.dp, bottom = 50.dp),
                 commentList = currentState.commentList
             )
         }

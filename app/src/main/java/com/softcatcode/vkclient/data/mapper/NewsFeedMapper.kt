@@ -1,12 +1,13 @@
 package com.softcatcode.vkclient.data.mapper
 
 import com.softcatcode.vkclient.data.model.GroupDto
-import com.softcatcode.vkclient.data.model.LikeCountResponseDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
 import com.softcatcode.vkclient.data.model.PostDto
+import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import com.sumin.vknewsclient.data.model.CommentsResponseDto
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -46,6 +47,25 @@ class NewsFeedMapper {
             val group = groups.find { it.id == model.communityId.absoluteValue }
             val post = mapPostDtoToEntity(model, group)
             result.add(post)
+        }
+        return result
+    }
+
+    fun mapResponseToComments(response: CommentsResponseDto): List<Comment> {
+        val result = mutableListOf<Comment>()
+        val comments = response.content.comments
+        val profiles = response.content.profiles
+        for (comment in comments) {
+            if (comment.text.isBlank()) continue
+            val author = profiles.firstOrNull { it.id == comment.authorId } ?: continue
+            val postComment = Comment(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.avatarUrl,
+                content = comment.text,
+                date =  mapLongToDate(comment.date)
+            )
+            result.add(postComment)
         }
         return result
     }
