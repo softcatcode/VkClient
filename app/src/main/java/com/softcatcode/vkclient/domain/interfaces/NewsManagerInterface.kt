@@ -1,5 +1,6 @@
 package com.softcatcode.vkclient.domain.interfaces
 
+import com.softcatcode.vkclient.domain.entities.AuthState
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.vk.api.sdk.auth.VKAuthenticationResult
@@ -12,7 +13,11 @@ interface NewsManagerInterface {
 
     suspend fun changeLikeStatus(post: PostData)
 
+    suspend fun checkAuthResult()
+
     fun getComments(post: PostData): Flow<List<Comment>>
 
-    suspend fun checkAuthResult()
+    fun getRecommendations(): Flow<List<PostData>>
+
+    fun getAuthStateFlow(): Flow<AuthState>
 }

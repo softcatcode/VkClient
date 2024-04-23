@@ -18,7 +18,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
@@ -55,7 +54,7 @@ class NewsManager(application: Application): NewsManagerInterface {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    val recommendations: StateFlow<List<PostData>> = postListFlow
+    override fun getRecommendations(): Flow<List<PostData>> = postListFlow
         .mergeWith(updatedPostListFlow)
         .stateIn(
             scope = coroutineScope,
@@ -109,7 +108,7 @@ class NewsManager(application: Application): NewsManagerInterface {
     }
 
     private val authRequest = MutableSharedFlow<Unit>(replay = 1)
-    val authState = flow {
+    override fun getAuthStateFlow() = flow {
         authRequest.emit(Unit)
         authRequest.collect {
             val currentToken = token
