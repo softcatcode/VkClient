@@ -4,7 +4,7 @@ import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 
 interface NewsManagerInterface {
-    suspend fun loadRecommendations()
+    suspend fun loadNext()
 
     suspend fun ignorePost(id: Long)
 

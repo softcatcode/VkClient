@@ -8,7 +8,7 @@ import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
 import com.softcatcode.vkclient.domain.interfaces.NewsManagerInterface
-import com.sumin.vknewsclient.extensions.mergeWith
+import com.softcatcode.vkclient.presentation.extensions.mergeWith
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -27,12 +27,14 @@ class NewsManager(application: Application): NewsManagerInterface {
     private val apiService = ApiFactory.apiService
     private val mapper = NewsFeedMapper()
 
-    private val posts = mutableListOf<PostData>()
+    private val _posts = mutableListOf<PostData>()
+    private val posts: List<PostData>
+        get() = _posts.toList()
 
     private var nextFrom: String? = null
 
 
-    private val postListRequestFlow = MutableSharedFlow<Unit>()
+    private val postListRequestFlow = MutableSharedFlow<Unit>(replay = 1)
     private val updatedPostListFlow = MutableSharedFlow<List<PostData>>()
     private val postListFlow: Flow<List<PostData>> = flow {
         postListRequestFlow.emit(Unit)
@@ -54,23 +56,23 @@ class NewsManager(application: Application): NewsManagerInterface {
 
     private fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 
-    override suspend fun loadRecommendations() {
+    private suspend fun loadRecommendations() {
         if (nextFrom == null && posts.isNotEmpty())
             return
         val response = nextFrom?.let {
             apiService.getRecommendations(token(), it)
         } ?: apiService.getRecommendations(token())
         nextFrom = response.newsFeedContent.nextFrom
-        posts.addAll(mapper.mapResponseToPosts(response))
+        _posts.addAll(mapper.mapResponseToPosts(response))
     }
 
-    suspend fun loadNext() {
+    override suspend fun loadNext() {
         postListRequestFlow.emit(Unit)
     }
 
     override suspend fun ignorePost(id: Long) {
         val post = posts.find { it.id == id } ?: return
-        posts.remove(post)
+        _posts.remove(post)
         apiService.ignorePost(token(), post.communityId, post.id)
         updatedPostListFlow.emit(posts)
     }
@@ -85,7 +87,7 @@ class NewsManager(application: Application): NewsManagerInterface {
             add(StatisticsItem(StatisticsType.Like, newLikeCount))
         }
         val index = posts.indexOfFirst { post.id == it.id }
-        posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
+        _posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
         updatedPostListFlow.emit(posts)
     }
 

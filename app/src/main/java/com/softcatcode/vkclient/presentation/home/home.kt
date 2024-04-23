@@ -11,7 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,7 +65,7 @@ fun HomeContent(
     onCommentClickListener: (PostData, StatisticsItem) -> Unit
 ) {
     val viewModel: NewsViewModel = viewModel()
-    val state = viewModel.state.observeAsState(HomeScreenState.Initial)
+    val state = viewModel.state.collectAsState(HomeScreenState.Initial)
 
     when (val currentState = state.value) {
 
