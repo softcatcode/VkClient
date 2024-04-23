@@ -9,6 +9,7 @@ import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
 import com.softcatcode.vkclient.domain.interfaces.NewsManagerInterface
 import com.softcatcode.vkclient.presentation.extensions.mergeWith
+import com.softcatcode.vkclient.domain.entities.AuthState
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,10 @@ import kotlinx.coroutines.flow.stateIn
 class NewsManager(application: Application): NewsManagerInterface {
 
     private val storage = VKPreferencesKeyValueStorage(application)
-    private val token = VKAccessToken.restore(storage)
+
+    private val token
+        get() = VKAccessToken.restore(storage)
+
     private val apiService = ApiFactory.apiService
     private val mapper = NewsFeedMapper()
 
@@ -102,6 +106,25 @@ class NewsManager(application: Application): NewsManagerInterface {
     }.retry {
         delay(RETRY_LOADING_TIMEOUT)
         true
+    }
+
+    private val authRequest = MutableSharedFlow<Unit>(replay = 1)
+    val authState = flow {
+        authRequest.emit(Unit)
+        authRequest.collect {
+            val currentToken = token
+            val loggedIn = currentToken != null && currentToken.isValid
+            val authState = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            emit(authState)
+        }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = AuthState.Initial
+    )
+
+    override suspend fun checkAuthResult() {
+        authRequest.emit(Unit)
     }
 
     companion object {

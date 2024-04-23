@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home.auth
+package com.softcatcode.vkclient.domain.entities
 
 sealed class AuthState {
     data object Authorized: AuthState()

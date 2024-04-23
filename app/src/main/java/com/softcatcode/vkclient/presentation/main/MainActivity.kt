@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.softcatcode.vkclient.presentation.home.auth.AuthState
+import com.softcatcode.vkclient.domain.entities.AuthState
 import com.softcatcode.vkclient.presentation.home.auth.AuthViewModel
 import com.softcatcode.vkclient.presentation.home.auth.LoginScreen
 import com.softcatcode.vkclient.presentation.ui.theme.VkClientTheme
@@ -20,10 +20,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             VkClientTheme {
                 val viewModel: AuthViewModel = viewModel()
-                val authState = viewModel.state.observeAsState(AuthState.Initial)
+                val authState = viewModel.state.collectAsState(AuthState.Initial)
                 val launcher = rememberLauncherForActivityResult(
                     contract = VK.getVKAuthActivityResultContract(),
-                    onResult = { viewModel.performAuthResult(it) }
+                    onResult = { viewModel.checkAuthResult() }
                 )
                 when (authState.value) {
                     is AuthState.Authorized -> VkMainScreen()

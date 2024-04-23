@@ -2,6 +2,7 @@ package com.softcatcode.vkclient.domain.interfaces
 
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.vk.api.sdk.auth.VKAuthenticationResult
 import kotlinx.coroutines.flow.Flow
 
 interface NewsManagerInterface {
@@ -12,4 +13,6 @@ interface NewsManagerInterface {
     suspend fun changeLikeStatus(post: PostData)
 
     fun getComments(post: PostData): Flow<List<Comment>>
+
+    suspend fun checkAuthResult()
 }
