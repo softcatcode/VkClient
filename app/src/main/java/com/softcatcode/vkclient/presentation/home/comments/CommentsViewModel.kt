@@ -10,6 +10,7 @@ import com.softcatcode.vkclient.data.implementations.NewsManager
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -18,24 +19,10 @@ class CommentsViewModel(
     application: Application
 ): AndroidViewModel(application) {
 
-    private val _state = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
-    val state: LiveData<CommentsScreenState> = _state
-
     private val repository = NewsManager(getApplication())
 
-    init {
-        loadComments(post)
+    val state = repository.getComments(post).map {
+        CommentsScreenState.Comments(it, post) as CommentsScreenState
     }
 
-    private fun loadComments(post: PostData) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val comments = repository.getComments(post)
-            withContext(Dispatchers.Main) {
-                _state.value = CommentsScreenState.Comments(
-                    post = post,
-                    commentList = comments
-                )
-            }
-        }
-    }
 }

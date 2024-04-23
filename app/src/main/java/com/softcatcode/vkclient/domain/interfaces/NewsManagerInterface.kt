@@ -2,6 +2,7 @@ package com.softcatcode.vkclient.domain.interfaces
 
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
+import kotlinx.coroutines.flow.Flow
 
 interface NewsManagerInterface {
     suspend fun loadNext()
@@ -10,5 +11,5 @@ interface NewsManagerInterface {
 
     suspend fun changeLikeStatus(post: PostData)
 
-    suspend fun getComments(post: PostData): List<Comment>
+    fun getComments(post: PostData): Flow<List<Comment>>
 }

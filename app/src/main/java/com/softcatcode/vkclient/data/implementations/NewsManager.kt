@@ -13,11 +13,13 @@ import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 
 class NewsManager(application: Application): NewsManagerInterface {
@@ -36,12 +38,15 @@ class NewsManager(application: Application): NewsManagerInterface {
 
     private val postListRequestFlow = MutableSharedFlow<Unit>(replay = 1)
     private val updatedPostListFlow = MutableSharedFlow<List<PostData>>()
-    private val postListFlow: Flow<List<PostData>> = flow {
+    private val postListFlow = flow {
         postListRequestFlow.emit(Unit)
         postListRequestFlow.collect {
             loadRecommendations()
             emit(posts)
         }
+    }.retry(1) {
+        delay(RETRY_LOADING_TIMEOUT)
+        true
     }
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
@@ -91,8 +96,15 @@ class NewsManager(application: Application): NewsManagerInterface {
         updatedPostListFlow.emit(posts)
     }
 
-    override suspend fun getComments(post: PostData): List<Comment> {
+    override fun getComments(post: PostData): Flow<List<Comment>> = flow {
         val response = apiService.loadComments(token(), post.communityId, post.id)
-        return mapper.mapResponseToComments(response)
+        emit(mapper.mapResponseToComments(response))
+    }.retry {
+        delay(RETRY_LOADING_TIMEOUT)
+        true
+    }
+
+    companion object {
+        private const val RETRY_LOADING_TIMEOUT = 1000L
     }
 }

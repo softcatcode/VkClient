@@ -1,11 +1,13 @@
 package com.softcatcode.vkclient.presentation.home.news
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.softcatcode.vkclient.data.implementations.NewsManager
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.presentation.extensions.mergeWith
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
@@ -20,6 +22,10 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     private val recommendationsFlow = repository.recommendations
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
 
+    private val exceptionHandler = CoroutineExceptionHandler { throwable, _ ->
+        Log.e("NewsViewModel", throwable.toString())
+    }
+
     val state = recommendationsFlow
         .filter { it.isNotEmpty() }
         .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
@@ -27,7 +33,7 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
         .mergeWith(updatedStateFlow)
 
     fun loadNextRecommendations() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             updatedStateFlow.emit(
                 NewsScreenState.Posts(
                     postList = recommendationsFlow.value,
@@ -39,13 +45,13 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun removePost(id: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             repository.ignorePost(id)
         }
     }
 
     fun changeLikeStatus(post: PostData) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             repository.changeLikeStatus(post)
         }
     }
