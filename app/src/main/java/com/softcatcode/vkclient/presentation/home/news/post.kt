@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -194,29 +195,24 @@ fun PostCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
 
         ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
             VkProfileCard(
                 post = post,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(2f),
                 cornerRadius = 8.dp
             )
             Text(
                 text = post.contentText,
                 fontSize = 16.sp,
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(2.dp)
+                modifier = Modifier.padding(2.dp)
             )
             AsyncImage(
                 model = post.contentImageUrl,
                 contentDescription = "",
                 modifier = Modifier
-                    .weight(7f)
                     .fillMaxWidth()
+                    .wrapContentHeight()
                     .padding(start = 2.dp, end = 2.dp),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillWidth
             )
             PostStatistics(
                 modifier = Modifier.height(30.dp),
@@ -258,7 +254,6 @@ fun PostScreen(
 ) {
     LazyColumn(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(paddingValues),
         contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 16.dp, bottom = 40.dp),
@@ -282,7 +277,7 @@ fun PostScreen(
                     modifier = Modifier
                         .padding(top = 10.dp)
                         .fillMaxWidth()
-                        .height(500.dp),
+                        .wrapContentHeight(),
                     post = post,
                     onStatisticsItemClickListener = onStatisticsItemClickListener
                 )

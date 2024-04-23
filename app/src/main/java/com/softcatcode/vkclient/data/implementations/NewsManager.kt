@@ -8,8 +8,17 @@ import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
 import com.softcatcode.vkclient.domain.interfaces.NewsManagerInterface
+import com.sumin.vknewsclient.extensions.mergeWith
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 
 class NewsManager(application: Application): NewsManagerInterface {
 
@@ -18,29 +27,52 @@ class NewsManager(application: Application): NewsManagerInterface {
     private val apiService = ApiFactory.apiService
     private val mapper = NewsFeedMapper()
 
-    private val _posts = mutableListOf<PostData>()
-    val posts: List<PostData>
-        get() = _posts.toList()
+    private val posts = mutableListOf<PostData>()
 
     private var nextFrom: String? = null
 
+
+    private val postListRequestFlow = MutableSharedFlow<Unit>()
+    private val updatedPostListFlow = MutableSharedFlow<List<PostData>>()
+    private val postListFlow: Flow<List<PostData>> = flow {
+        postListRequestFlow.emit(Unit)
+        postListRequestFlow.collect {
+            loadRecommendations()
+            emit(posts)
+        }
+    }
+
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+
+    val recommendations: StateFlow<List<PostData>> = postListFlow
+        .mergeWith(updatedPostListFlow)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = posts
+        )
+
     private fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 
-    override suspend fun loadRecommendations(): List<PostData> {
+    override suspend fun loadRecommendations() {
         if (nextFrom == null && posts.isNotEmpty())
-            return posts
+            return
         val response = nextFrom?.let {
             apiService.getRecommendations(token(), it)
         } ?: apiService.getRecommendations(token())
         nextFrom = response.newsFeedContent.nextFrom
-        _posts.addAll(mapper.mapResponseToPosts(response))
-        return posts
+        posts.addAll(mapper.mapResponseToPosts(response))
+    }
+
+    suspend fun loadNext() {
+        postListRequestFlow.emit(Unit)
     }
 
     override suspend fun ignorePost(id: Long) {
-        val post = _posts.find { it.id == id } ?: return
-        _posts.remove(post)
+        val post = posts.find { it.id == id } ?: return
+        posts.remove(post)
         apiService.ignorePost(token(), post.communityId, post.id)
+        updatedPostListFlow.emit(posts)
     }
 
     override suspend fun changeLikeStatus(post: PostData) {
@@ -53,7 +85,8 @@ class NewsManager(application: Application): NewsManagerInterface {
             add(StatisticsItem(StatisticsType.Like, newLikeCount))
         }
         val index = posts.indexOfFirst { post.id == it.id }
-        _posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
+        posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
+        updatedPostListFlow.emit(posts)
     }
 
     override suspend fun getComments(post: PostData): List<Comment> {
