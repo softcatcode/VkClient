@@ -3,8 +3,7 @@ package com.softcatcode.vkclient.domain.interfaces
 import com.softcatcode.vkclient.domain.entities.AuthState
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
-import com.vk.api.sdk.auth.VKAuthenticationResult
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface NewsManagerInterface {
     suspend fun loadNext()
@@ -15,9 +14,9 @@ interface NewsManagerInterface {
 
     suspend fun checkAuthResult()
 
-    fun getComments(post: PostData): Flow<List<Comment>>
+    fun getComments(post: PostData): StateFlow<List<Comment>>
 
-    fun getRecommendations(): Flow<List<PostData>>
+    fun getRecommendations(): StateFlow<List<PostData>>
 
-    fun getAuthStateFlow(): Flow<AuthState>
+    fun getAuthStateFlow(): StateFlow<AuthState>
 }

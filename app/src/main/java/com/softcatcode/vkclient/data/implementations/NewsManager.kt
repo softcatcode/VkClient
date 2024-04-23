@@ -15,9 +15,9 @@ import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
@@ -54,7 +54,7 @@ class NewsManager(application: Application): NewsManagerInterface {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
-    override fun getRecommendations(): Flow<List<PostData>> = postListFlow
+    override fun getRecommendations(): StateFlow<List<PostData>> = postListFlow
         .mergeWith(updatedPostListFlow)
         .stateIn(
             scope = coroutineScope,
@@ -99,13 +99,17 @@ class NewsManager(application: Application): NewsManagerInterface {
         updatedPostListFlow.emit(posts)
     }
 
-    override fun getComments(post: PostData): Flow<List<Comment>> = flow {
+    override fun getComments(post: PostData): StateFlow<List<Comment>> = flow {
         val response = apiService.loadComments(token(), post.communityId, post.id)
         emit(mapper.mapResponseToComments(response))
     }.retry {
         delay(RETRY_LOADING_TIMEOUT)
         true
-    }
+    }.stateIn(
+        scope = coroutineScope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
 
     private val authRequest = MutableSharedFlow<Unit>(replay = 1)
     override fun getAuthStateFlow() = flow {

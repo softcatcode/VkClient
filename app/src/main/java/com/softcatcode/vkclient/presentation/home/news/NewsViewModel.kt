@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.softcatcode.vkclient.data.implementations.NewsManager
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.domain.useCase.GetRecommendationsUseCase
 import com.softcatcode.vkclient.presentation.extensions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +19,9 @@ import kotlinx.coroutines.launch
 class NewsViewModel(application: Application): AndroidViewModel(application) {
 
     private val repository = NewsManager(getApplication())
+    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
 
-    private val recommendationsFlow = repository.recommendations
+    private val recommendationsFlow = getRecommendationsUseCase()
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
 
     private val exceptionHandler = CoroutineExceptionHandler { throwable, _ ->
