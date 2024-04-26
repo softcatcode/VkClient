@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-parcelize")
+    id("kotlin-kapt")
 }
 
 android {
@@ -66,7 +67,11 @@ dependencies {
     implementation(libs.com.google.gson)
     implementation(libs.com.vk.core)
     implementation(libs.com.vk.api)
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation(libs.com.squareapp.retrofit)
+    implementation(libs.com.squareapp.okhttp)
+    implementation(libs.io.coil)
+    implementation(libs.com.google.dagger)
+    kapt(libs.com.google.dagger.compilier)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -76,3 +81,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+//YSRIXOqZ52rXg7ws4wME
+// 0c70b3070c70b3070c70b3077a0f67477c00c700c70b3076a698334625d3b99e012cd0e
