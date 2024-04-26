@@ -1,12 +1,13 @@
 package com.softcatcode.vkclient.presentation.home.news
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.softcatcode.vkclient.data.implementations.NewsManager
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.domain.useCase.ChangeLikeStatusUseCase
 import com.softcatcode.vkclient.domain.useCase.GetRecommendationsUseCase
+import com.softcatcode.vkclient.domain.useCase.IgnorePostUseCase
+import com.softcatcode.vkclient.domain.useCase.LoadNextPostsUseCase
 import com.softcatcode.vkclient.presentation.extensions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -15,11 +16,14 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsViewModel(application: Application): AndroidViewModel(application) {
-
-    private val repository = NewsManager(getApplication())
-    private val getRecommendationsUseCase = GetRecommendationsUseCase(repository)
+class NewsViewModel @Inject constructor(
+    getRecommendationsUseCase: GetRecommendationsUseCase,
+    private val loadNextPostsUseCase: LoadNextPostsUseCase,
+    private val ignorePostUseCase: IgnorePostUseCase,
+    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase
+): ViewModel() {
 
     private val recommendationsFlow = getRecommendationsUseCase()
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
@@ -42,19 +46,19 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
                     nextLoading = true
                 )
             )
-            repository.loadNext()
+            loadNextPostsUseCase()
         }
     }
 
     fun removePost(id: Long) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            repository.ignorePost(id)
+            ignorePostUseCase(id)
         }
     }
 
     fun changeLikeStatus(post: PostData) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            repository.changeLikeStatus(post)
+            changeLikeStatusUseCase(post)
         }
     }
 }

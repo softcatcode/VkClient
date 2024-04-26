@@ -1,6 +1,5 @@
 package com.softcatcode.vkclient.presentation.home.comments
 
-import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,13 +29,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.softcatcode.vkclient.R
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.presentation.extensions.getApplicationComponent
 
 @Composable
 fun CommentItem(
@@ -147,12 +146,8 @@ fun CommentScreen(
     post: PostData,
     onBackPressed: () -> Unit
 ) {
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            post,
-            LocalContext.current.applicationContext as Application
-        )
-    )
+    val component = getApplicationComponent().getCommentsScreenComponentFactory().create(post)
+    val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
     val state = viewModel.state.collectAsState(CommentsScreenState.Initial)
     val currentState = state.value
 

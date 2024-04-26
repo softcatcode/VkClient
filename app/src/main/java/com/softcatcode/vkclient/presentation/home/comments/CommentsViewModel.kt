@@ -1,19 +1,17 @@
 package com.softcatcode.vkclient.presentation.home.comments
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.softcatcode.vkclient.data.implementations.NewsManager
+import androidx.lifecycle.ViewModel
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.softcatcode.vkclient.domain.useCase.GetCommentsUseCase
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class CommentsViewModel(
+class CommentsViewModel @Inject constructor(
     post: PostData,
-    application: Application
-): AndroidViewModel(application) {
+    getCommentsUseCase: GetCommentsUseCase
+): ViewModel() {
 
-    private val repository = NewsManager(getApplication())
-
-    val state = repository.getComments(post).map {
+    val state = getCommentsUseCase(post).map {
         CommentsScreenState.Comments(it, post) as CommentsScreenState
     }
 

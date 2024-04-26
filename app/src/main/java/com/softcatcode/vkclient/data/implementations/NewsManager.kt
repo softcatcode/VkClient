@@ -21,8 +21,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
-class NewsManager(application: Application): NewsManagerInterface {
+class NewsManager @Inject constructor(application: Application): NewsManagerInterface {
 
     private val storage = VKPreferencesKeyValueStorage(application)
 

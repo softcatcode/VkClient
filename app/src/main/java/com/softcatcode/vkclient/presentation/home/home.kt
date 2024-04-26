@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import com.softcatcode.vkclient.presentation.extensions.getApplicationComponent
 import com.softcatcode.vkclient.presentation.home.news.NewsScreenState
 import com.softcatcode.vkclient.presentation.home.news.PostScreen
 import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
@@ -64,7 +65,8 @@ fun HomeContent(
     paddingValues: PaddingValues,
     onCommentClickListener: (PostData, StatisticsItem) -> Unit
 ) {
-    val viewModel: NewsViewModel = viewModel()
+    val component = getApplicationComponent()
+    val viewModel: NewsViewModel = viewModel(factory = component.getViewModelFactory())
     val state = viewModel.state.collectAsState(HomeScreenState.Initial)
 
     when (val currentState = state.value) {
