@@ -127,8 +127,16 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         initialValue = AuthState.Initial
     )
 
+    override fun getFavourites(): StateFlow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun checkAuthResult() {
         authRequest.emit(Unit)
+    }
+
+    override suspend fun loadFavourites() {
+        TODO("Not yet implemented")
     }
 
     companion object {
