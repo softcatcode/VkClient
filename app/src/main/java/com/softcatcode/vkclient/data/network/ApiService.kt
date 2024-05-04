@@ -52,6 +52,20 @@ interface ApiService {
         @Query("access_token") token: String
     ): FavouritesResponseDto
 
+    @GET("fave.removePost?v=$VERSION")
+    suspend fun removeFromFavourites(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("id") postId: Long
+    ): FavouritesResponseDto
+
+    @GET("fave.addPost?v=$VERSION")
+    suspend fun addToFavourites(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("id") postId: Long
+    ): FavouritesResponseDto
+
     companion object {
         private const val VERSION = "5.199"
         private const val FAVOURITES_COUNT = 10
