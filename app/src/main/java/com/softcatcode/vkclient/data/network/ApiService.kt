@@ -1,9 +1,9 @@
 package com.softcatcode.vkclient.data.network
 
-import com.softcatcode.vkclient.data.implementations.NewsManager.Companion.FAVOURITES_PORTION_SIZE
 import com.softcatcode.vkclient.data.model.FavouritesResponseDto
 import com.softcatcode.vkclient.data.model.LikeCountResponseDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.model.ReturnStatusResponseDto
 import com.sumin.vknewsclient.data.model.CommentsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -60,14 +60,14 @@ interface ApiService {
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
         @Query("id") postId: Long
-    ): FavouritesResponseDto
+    ): ReturnStatusResponseDto
 
     @GET("fave.addPost?v=$VERSION")
     suspend fun addToFavourites(
         @Query("access_token") token: String,
         @Query("owner_id") ownerId: Long,
         @Query("id") postId: Long
-    ): FavouritesResponseDto
+    ): ReturnStatusResponseDto
 
     companion object {
         private const val VERSION = "5.199"

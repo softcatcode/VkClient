@@ -149,12 +149,9 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
             offset = favouritesCount,
             count = FAVOURITES_PORTION_SIZE
         )
-        _favouritesList.addAll(response.)
-        val respons = nextFrom?.let {
-            apiService.getRecommendations(token(), it)
-        } ?: apiService.getRecommendations(token())
-        nextFrom = response.newsFeedContent.nextFrom
-        _posts.addAll(mapper.mapResponseToPosts(response))
+        favouritesCount += FAVOURITES_PORTION_SIZE
+        _favouritesList.addAll(mapper.mapResponseToFavourites(response))
+        favouritesListUpdate.emit(favouritesList)
     }
 
     override fun getFavourites(): StateFlow<List<PostData>> = favouritesListFlow
