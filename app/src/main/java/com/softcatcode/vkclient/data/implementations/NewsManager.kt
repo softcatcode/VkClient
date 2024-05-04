@@ -139,6 +139,10 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         TODO("Not yet implemented")
     }
 
+    override suspend fun removeFromFavourites() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         private const val RETRY_LOADING_TIMEOUT = 1000L
     }
