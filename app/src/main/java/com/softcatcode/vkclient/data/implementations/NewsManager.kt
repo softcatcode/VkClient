@@ -1,7 +1,7 @@
 package com.softcatcode.vkclient.data.implementations
 
 import android.app.Application
-import com.softcatcode.vkclient.data.mapper.NewsFeedMapper
+import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
@@ -31,7 +31,7 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         get() = VKAccessToken.restore(storage)
 
     private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
+    private val mapper = DtoMapper()
 
     private val _posts = mutableListOf<PostData>()
     private val posts: List<PostData>

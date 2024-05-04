@@ -1,5 +1,6 @@
 package com.softcatcode.vkclient.data.mapper
 
+import com.softcatcode.vkclient.data.model.FavouritesResponseDto
 import com.softcatcode.vkclient.data.model.GroupDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
 import com.softcatcode.vkclient.data.model.PostDto
@@ -13,7 +14,7 @@ import java.util.Date
 import java.util.Locale
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class DtoMapper {
 
     private fun mapPostDtoToEntity(model: PostDto, group: GroupDto?) = with (model) {
         PostData(
@@ -69,4 +70,9 @@ class NewsFeedMapper {
         }
         return result
     }
+
+    fun mapResponseToFavourites(model: FavouritesResponseDto) =
+        model.response.items.map {
+            mapPostDtoToEntity(it, null)
+        }
 }
