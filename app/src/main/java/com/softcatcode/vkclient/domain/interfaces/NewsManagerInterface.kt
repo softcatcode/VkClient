@@ -16,7 +16,9 @@ interface NewsManagerInterface {
 
     suspend fun loadFavourites()
 
-    suspend fun removeFromFavourites()
+    suspend fun removeFromFavourites(id: Long)
+
+    suspend fun addToFavourites(post: PostData)
 
     fun getComments(post: PostData): StateFlow<List<Comment>>
 

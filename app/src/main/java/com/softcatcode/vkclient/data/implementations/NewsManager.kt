@@ -127,23 +127,66 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         initialValue = AuthState.Initial
     )
 
-    override fun getFavourites(): StateFlow<List<PostData>> {
-        TODO("Not yet implemented")
+    private val _favouritesList = mutableListOf<PostData>()
+    private val favouritesList: List<PostData>
+        get() = _favouritesList.toList()
+
+    private val favouritesRequest = MutableSharedFlow<Unit>(replay = 1)
+    private val favouritesListUpdate = MutableSharedFlow<List<PostData>>()
+    private val favouritesListFlow = flow {
+        favouritesRequest.emit(Unit)
+        favouritesRequest.collect {
+            loadFavouritePosts()
+            emit(favouritesList)
+        }
     }
+
+    private var favouritesCount = 0
+
+    private suspend fun loadFavouritePosts() {
+        val response = apiService.loadFavourites(
+            token = token(),
+            offset = favouritesCount,
+            count = FAVOURITES_PORTION_SIZE
+        )
+        _favouritesList.addAll(response.)
+        val respons = nextFrom?.let {
+            apiService.getRecommendations(token(), it)
+        } ?: apiService.getRecommendations(token())
+        nextFrom = response.newsFeedContent.nextFrom
+        _posts.addAll(mapper.mapResponseToPosts(response))
+    }
+
+    override fun getFavourites(): StateFlow<List<PostData>> = favouritesListFlow
+        .mergeWith(favouritesListUpdate)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = favouritesList
+        )
 
     override suspend fun checkAuthResult() {
         authRequest.emit(Unit)
     }
 
     override suspend fun loadFavourites() {
-        TODO("Not yet implemented")
+        favouritesRequest.emit(Unit)
     }
 
-    override suspend fun removeFromFavourites() {
-        TODO("Not yet implemented")
+    override suspend fun removeFromFavourites(id: Long) {
+        val post = favouritesList.find { it.id == id } ?: return
+        _favouritesList.remove(post)
+        apiService.removeFromFavourites(token(), post.communityId, id)
+        favouritesListUpdate.emit(favouritesList)
+    }
+
+    override suspend fun addToFavourites(post: PostData) {
+        apiService.addToFavourites(token(), post.communityId, post.id)
+        favouritesRequest.emit(Unit)
     }
 
     companion object {
         private const val RETRY_LOADING_TIMEOUT = 1000L
+        private const val FAVOURITES_PORTION_SIZE = 10
     }
 }

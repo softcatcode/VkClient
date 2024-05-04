@@ -1,5 +1,6 @@
 package com.softcatcode.vkclient.data.network
 
+import com.softcatcode.vkclient.data.implementations.NewsManager.Companion.FAVOURITES_PORTION_SIZE
 import com.softcatcode.vkclient.data.model.FavouritesResponseDto
 import com.softcatcode.vkclient.data.model.LikeCountResponseDto
 import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
@@ -47,9 +48,11 @@ interface ApiService {
         @Query("post_id") postId: Long
     ): CommentsResponseDto
 
-    @GET("fave.get?v=$VERSION&item_type=post&offset=0&count=$FAVOURITES_COUNT")
+    @GET("fave.get?v=$VERSION&item_type=post")
     suspend fun loadFavourites(
-        @Query("access_token") token: String
+        @Query("access_token") token: String,
+        @Query("offset") offset: Int,
+        @Query("count") count: Int,
     ): FavouritesResponseDto
 
     @GET("fave.removePost?v=$VERSION")
@@ -68,6 +71,5 @@ interface ApiService {
 
     companion object {
         private const val VERSION = "5.199"
-        private const val FAVOURITES_COUNT = 10
     }
 }
