@@ -1,10 +1,7 @@
 package com.softcatcode.vkclient.presentation.home
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
@@ -12,7 +9,6 @@ import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,11 +17,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
+import com.softcatcode.vkclient.presentation.extensions.ProgressBar
 import com.softcatcode.vkclient.presentation.extensions.getApplicationComponent
 import com.softcatcode.vkclient.presentation.home.news.NewsScreenState
-import com.softcatcode.vkclient.presentation.home.news.PostScreen
+import com.softcatcode.vkclient.presentation.home.news.PostList
 import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
-import com.softcatcode.vkclient.presentation.ui.theme.DarkBlue
 
 @Composable
 fun RowScope.BottomNavigationItem(
@@ -61,17 +57,16 @@ fun RowScope.BottomNavigationItem(
 }
 
 @Composable
-fun HomeContent(
+fun PostsContent(
     paddingValues: PaddingValues,
-    onCommentClickListener: (PostData, StatisticsItem) -> Unit
+    onCommentClickListener: (PostData, StatisticsItem) -> Unit,
+    viewModel: NewsViewModel
 ) {
-    val component = getApplicationComponent()
-    val viewModel: NewsViewModel = viewModel(factory = component.getViewModelFactory())
     val state = viewModel.state.collectAsState(HomeScreenState.Initial)
 
     when (val currentState = state.value) {
 
-        is NewsScreenState.Posts -> PostScreen(
+        is NewsScreenState.Posts -> PostList(
             viewModel = viewModel,
             posts = currentState.postList,
             paddingValues = paddingValues,
@@ -85,13 +80,17 @@ fun HomeContent(
         }
 
         is NewsScreenState.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = DarkBlue)
-            }
+            ProgressBar()
         }
     }
+}
+
+@Composable
+fun NewsContent(
+    paddingValues: PaddingValues,
+    onCommentClickListener: (PostData, StatisticsItem) -> Unit
+) {
+    val component = getApplicationComponent()
+    val viewModel: NewsViewModel = viewModel(factory = component.getViewModelFactory())
+    PostsContent(paddingValues, onCommentClickListener, viewModel)
 }
