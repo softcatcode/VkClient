@@ -22,5 +22,5 @@ class FavouritesViewModel @Inject constructor(
 
     override fun invokeGetPostsUseCase() = getFavouritesUseCase()
     override suspend fun invokeLoadNextUseCase() = loadNextFavouritesUseCase()
-    override suspend fun invokeRemovePostUseCase(id: Long) = removeFromFavouritesUseCase()
+    override suspend fun invokeRemovePostUseCase(id: Long) = removeFromFavouritesUseCase(id)
 }

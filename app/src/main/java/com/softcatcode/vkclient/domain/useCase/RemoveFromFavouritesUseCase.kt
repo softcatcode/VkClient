@@ -6,5 +6,5 @@ import javax.inject.Inject
 class RemoveFromFavouritesUseCase @Inject constructor(
     private val repository: NewsManagerInterface
 ) {
-    suspend operator fun invoke() = repository.removeFromFavourites()
+    suspend operator fun invoke(id: Long) = repository.removeFromFavourites(id)
 }

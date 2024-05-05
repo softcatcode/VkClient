@@ -1,6 +1,7 @@
 package com.softcatcode.vkclient.data.implementations
 
 import android.app.Application
+import android.util.Log
 import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.domain.entities.Comment
@@ -63,6 +64,10 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
             initialValue = posts
         )
 
+    init {
+        Log.i(this::class.qualifiedName, token())
+    }
+
     private fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 
     private suspend fun loadRecommendations() {
@@ -87,17 +92,31 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
     }
 
     override suspend fun changeLikeStatus(post: PostData) {
-        val newLikeCount = if (post.liked)
+        val newLikeCount = if (post.liked) {
+            Log.i("mumu", "dislike")
             apiService.dislike(token(), post.communityId, post.id).likeCount.count
-        else
+        } else {
+            Log.i("mumu", "like")
             apiService.like(token(), post.communityId, post.id).likeCount.count
+        }
+
+        Log.i("mumu", "flag")
         val newStatistics = post.statistics.toMutableList().apply {
             removeIf { it.type == StatisticsType.Like }
             add(StatisticsItem(StatisticsType.Like, newLikeCount))
         }
-        val index = posts.indexOfFirst { post.id == it.id }
-        _posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
-        updatedPostListFlow.emit(posts)
+
+        _posts.indexOfFirst { post.id == it.id }.let {
+            Log.i("mumu", "recommendations update")
+            _posts[it] = post.copy(statistics = newStatistics, liked = !post.liked)
+            updatedPostListFlow.emit(posts)
+        }
+        _favouritesList.indexOfFirst { post.id == it.id }.let {
+            Log.i("mumu", "favourites update")
+            _favouritesList[it] = post.copy(statistics = newStatistics, liked = !post.liked)
+            favouritesListUpdate.emit(favouritesList)
+            Log.i("mumu", "finished fav update")
+        }
     }
 
     override fun getComments(post: PostData): StateFlow<List<Comment>> = flow {
@@ -149,8 +168,9 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
             offset = favouritesCount,
             count = FAVOURITES_PORTION_SIZE
         )
-        favouritesCount += FAVOURITES_PORTION_SIZE
-        _favouritesList.addAll(mapper.mapResponseToFavourites(response))
+        val postList = mapper.mapResponseToFavourites(response)
+        favouritesCount += postList.size
+        _favouritesList.addAll(postList)
         favouritesListUpdate.emit(favouritesList)
     }
 
@@ -184,6 +204,6 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
 
     companion object {
         private const val RETRY_LOADING_TIMEOUT = 1000L
-        private const val FAVOURITES_PORTION_SIZE = 10
+        private const val FAVOURITES_PORTION_SIZE = 2
     }
 }

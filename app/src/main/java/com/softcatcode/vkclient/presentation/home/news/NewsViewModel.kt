@@ -35,11 +35,13 @@ open class NewsViewModel @Inject constructor(
         Log.e("NewsViewModel", throwable.toString())
     }
 
-    val state = postFlow
-        .filter { it.isNotEmpty() }
-        .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
-        .onStart { emit(NewsScreenState.Loading) }
-        .mergeWith(updatedStateFlow)
+    val state by lazy {
+        postFlow
+            .filter { it.isNotEmpty() }
+            .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
+            .onStart { emit(NewsScreenState.Loading) }
+            .mergeWith(updatedStateFlow)
+    }
 
     fun loadNext() {
         viewModelScope.launch(exceptionHandler) {

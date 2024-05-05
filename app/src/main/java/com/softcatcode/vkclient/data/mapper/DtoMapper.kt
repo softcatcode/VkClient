@@ -27,7 +27,7 @@ class DtoMapper {
             contentText = text,
             liked = likes.userLikes == 1,
             statistics = listOf(
-                StatisticsItem(StatisticsType.View, views.count),
+                StatisticsItem(StatisticsType.View, views?.count ?: 0),
                 StatisticsItem(StatisticsType.Like, likes.count),
                 StatisticsItem(StatisticsType.Share, reposts.count),
                 StatisticsItem(StatisticsType.Comment, comments.count)
@@ -73,6 +73,6 @@ class DtoMapper {
 
     fun mapResponseToFavourites(model: FavouritesResponseDto) =
         model.response.items.map {
-            mapPostDtoToEntity(it, null)
+            mapPostDtoToEntity(it.postDto, null)
         }
 }

@@ -9,7 +9,7 @@ data class PostDto(
     @SerializedName("date") val date: Long,
     @SerializedName("likes") val likes: LikesDto,
     @SerializedName("comments") val comments: CommentDto,
-    @SerializedName("views") val views: ViewsDto,
+    @SerializedName("views") val views: ViewsDto?,
     @SerializedName("reposts") val reposts: RepostsDto,
     @SerializedName("attachments") val attachments: List<AttachmentDto>?
 )
