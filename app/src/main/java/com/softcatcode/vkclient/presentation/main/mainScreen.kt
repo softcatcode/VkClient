@@ -11,8 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.softcatcode.vkclient.presentation.favourites.FavouritesContent
 import com.softcatcode.vkclient.presentation.home.BottomNavigationItem
-import com.softcatcode.vkclient.presentation.home.HomeContent
+import com.softcatcode.vkclient.presentation.home.NewsContent
 import com.softcatcode.vkclient.presentation.navigation.AppNavGraph
 import com.softcatcode.vkclient.presentation.navigation.NavigationState
 import com.softcatcode.vkclient.presentation.home.comments.CommentScreen
@@ -57,7 +58,7 @@ fun VkMainScreen() {
         AppNavGraph(
             navController = navState.navController,
             newsScreenContent = {
-                HomeContent(paddingValues = it) { post, _ ->
+                NewsContent(paddingValues = it) { post, _ ->
                     navState.navigateToComments(post)
                 }
             },
@@ -66,7 +67,11 @@ fun VkMainScreen() {
                     navState.navController.popBackStack()
                 }
             },
-            favouriteScreenContent = {  },
+            favouriteScreenContent = {
+                FavouritesContent(paddingValues = it) { post, _ ->
+                    navState.navigateToComments(post)
+                }
+            },
             profileScreenContent = {  }
         )
     }

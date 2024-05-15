@@ -1,19 +1,21 @@
 package com.softcatcode.vkclient.data.mapper
 
-import com.softcatcode.vkclient.data.model.GroupDto
-import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
-import com.softcatcode.vkclient.data.model.PostDto
+import com.softcatcode.vkclient.data.dtoModels.FavouritePostDto
+import com.softcatcode.vkclient.data.dtoModels.FavouritesResponseDto
+import com.softcatcode.vkclient.data.dtoModels.GroupDto
+import com.softcatcode.vkclient.data.dtoModels.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.dtoModels.PostDto
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
-import com.sumin.vknewsclient.data.model.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.CommentsResponseDto
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class DtoMapper {
 
     private fun mapPostDtoToEntity(model: PostDto, group: GroupDto?) = with (model) {
         PostData(
@@ -26,7 +28,26 @@ class NewsFeedMapper {
             contentText = text,
             liked = likes.userLikes == 1,
             statistics = listOf(
-                StatisticsItem(StatisticsType.View, views.count),
+                StatisticsItem(StatisticsType.View, views?.count ?: 0),
+                StatisticsItem(StatisticsType.Like, likes.count),
+                StatisticsItem(StatisticsType.Share, reposts.count),
+                StatisticsItem(StatisticsType.Comment, comments.count)
+            )
+        )
+    }
+
+    private fun mapPostDtoToEntity(model: FavouritePostDto, group: GroupDto?) = with (model) {
+        PostData(
+            id = id,
+            communityId = communityId,
+            communityName = group?.name ?: "",
+            publicationDate = mapLongToDate(date),
+            avatarUrl = group?.imgUrl ?: "",
+            contentImageUrl = attachments?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
+            contentText = text,
+            liked = likes.userLikes == 1,
+            statistics = listOf(
+                StatisticsItem(StatisticsType.View, views?.count ?: 0),
                 StatisticsItem(StatisticsType.Like, likes.count),
                 StatisticsItem(StatisticsType.Share, reposts.count),
                 StatisticsItem(StatisticsType.Comment, comments.count)
@@ -63,10 +84,18 @@ class NewsFeedMapper {
                 authorName = "${author.firstName} ${author.lastName}",
                 authorAvatarUrl = author.avatarUrl,
                 content = comment.text,
-                date =  mapLongToDate(comment.date)
+                date = mapLongToDate(comment.date)
             )
             result.add(postComment)
         }
         return result
     }
+
+    fun mapResponseToFavourites(model: FavouritesResponseDto, groups: List<GroupDto>?) =
+        model.content.items.map { favouriteItem ->
+            mapPostDtoToEntity(
+                favouriteItem.postDto,
+                groups?.find { it.id == favouriteItem.postDto.communityId.absoluteValue }
+            )
+        }
 }

@@ -1,8 +1,8 @@
 package com.sumin.vknewsclient.data.model
 
 import com.google.gson.annotations.SerializedName
-import com.softcatcode.vkclient.data.model.CommentDto
-import com.softcatcode.vkclient.data.model.ProfileDto
+import com.softcatcode.vkclient.data.dtoModels.CommentDto
+import com.softcatcode.vkclient.data.dtoModels.ProfileDto
 
 data class CommentsContentDto(
     @SerializedName("items") val comments: List<CommentDto>,

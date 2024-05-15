@@ -1,7 +1,7 @@
 package com.softcatcode.vkclient.data.implementations
 
 import android.app.Application
-import com.softcatcode.vkclient.data.mapper.NewsFeedMapper
+import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class NewsManager @Inject constructor(application: Application): NewsManagerInterface {
 
@@ -31,7 +32,7 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         get() = VKAccessToken.restore(storage)
 
     private val apiService = ApiFactory.apiService
-    private val mapper = NewsFeedMapper()
+    private val mapper = DtoMapper()
 
     private val _posts = mutableListOf<PostData>()
     private val posts: List<PostData>
@@ -91,13 +92,29 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
             apiService.dislike(token(), post.communityId, post.id).likeCount.count
         else
             apiService.like(token(), post.communityId, post.id).likeCount.count
+
         val newStatistics = post.statistics.toMutableList().apply {
-            removeIf { it.type == StatisticsType.Like }
-            add(StatisticsItem(StatisticsType.Like, newLikeCount))
+            replaceAll {
+                val count = if (it.type == StatisticsType.Like)
+                    newLikeCount
+                else
+                    it.count
+                it.copy(count = count)
+            }
         }
-        val index = posts.indexOfFirst { post.id == it.id }
-        _posts[index] = post.copy(statistics = newStatistics, liked = !post.liked)
+        updatePostList(_favouritesList, post.id, newStatistics, !post.liked)
+        updatePostList(_posts, post.id, newStatistics, !post.liked)
         updatedPostListFlow.emit(posts)
+        favouritesListUpdate.emit(favouritesList)
+    }
+
+    private fun updatePostList(list: MutableList<PostData>, postId: Long, newStatistics: List<StatisticsItem>, liked: Boolean) {
+        list.replaceAll {
+            if (it.id == postId)
+                it.copy(statistics = newStatistics, liked = liked)
+            else
+                it
+        }
     }
 
     override fun getComments(post: PostData): StateFlow<List<Comment>> = flow {
@@ -127,11 +144,69 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
         initialValue = AuthState.Initial
     )
 
+    private val _favouritesList = mutableListOf<PostData>()
+    private val favouritesList: List<PostData>
+        get() = _favouritesList.toList()
+
+    private val favouritesRequest = MutableSharedFlow<Unit>(replay = 1)
+    private val favouritesListUpdate = MutableSharedFlow<List<PostData>>()
+    private val favouritesListFlow = flow {
+        favouritesRequest.emit(Unit)
+        favouritesRequest.collect {
+            loadFavouritePosts()
+            emit(favouritesList)
+        }
+    }
+
+    private var favouritesCount = 0
+
+    private suspend fun loadFavouritePosts() {
+        val token = token()
+        val response = apiService.loadFavourites(
+            token = token,
+            offset = favouritesCount,
+            count = FAVOURITES_PORTION_SIZE
+        )
+        val groups = List(response.content.items.size) {
+            val groupId = response.content.items[it].postDto.communityId.absoluteValue
+            apiService.getGroupById(token, groupId).content.items[0]
+        }
+        val postList = mapper.mapResponseToFavourites(response, groups)
+        favouritesCount += postList.size
+        _favouritesList.addAll(postList)
+        favouritesListUpdate.emit(favouritesList)
+    }
+
+    override fun getFavourites(): StateFlow<List<PostData>> = favouritesListFlow
+        .mergeWith(favouritesListUpdate)
+        .stateIn(
+            scope = coroutineScope,
+            started = SharingStarted.Lazily,
+            initialValue = favouritesList
+        )
+
     override suspend fun checkAuthResult() {
         authRequest.emit(Unit)
     }
 
+    override suspend fun loadFavourites() {
+        favouritesRequest.emit(Unit)
+    }
+
+    override suspend fun removeFromFavourites(id: Long) {
+        val post = favouritesList.find { it.id == id } ?: return
+        _favouritesList.remove(post)
+        apiService.removeFromFavourites(token(), post.communityId, id)
+        favouritesListUpdate.emit(favouritesList)
+    }
+
+    override suspend fun addToFavourites(post: PostData) {
+        apiService.addToFavourites(token(), post.communityId, post.id)
+        favouritesRequest.emit(Unit)
+    }
+
     companion object {
         private const val RETRY_LOADING_TIMEOUT = 1000L
+        private const val FAVOURITES_PORTION_SIZE = 2
     }
 }

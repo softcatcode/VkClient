@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,8 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -195,7 +194,9 @@ fun PostCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
 
         ) {
-        Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()) {
             VkProfileCard(
                 post = post,
                 cornerRadius = 8.dp
@@ -245,7 +246,7 @@ fun PostBackground() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun PostScreen(
+fun PostList(
     viewModel: NewsViewModel,
     posts: List<PostData>,
     paddingValues: PaddingValues,
@@ -294,11 +295,8 @@ fun PostScreen(
                 ) {
                     CircularProgressIndicator(color = DarkBlue)
                 }
-            } else {
-                SideEffect {
-                    viewModel.loadNextRecommendations()
-                }
-            }
+            } else
+                SideEffect { viewModel.loadNext() }
         }
     }
 }

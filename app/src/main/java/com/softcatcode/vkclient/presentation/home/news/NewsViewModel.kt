@@ -12,47 +12,52 @@ import com.softcatcode.vkclient.presentation.extensions.mergeWith
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class NewsViewModel @Inject constructor(
-    getRecommendationsUseCase: GetRecommendationsUseCase,
+open class NewsViewModel @Inject constructor(
+    private val getRecommendationsUseCase: GetRecommendationsUseCase,
     private val loadNextPostsUseCase: LoadNextPostsUseCase,
     private val ignorePostUseCase: IgnorePostUseCase,
     private val changeLikeStatusUseCase: ChangeLikeStatusUseCase
 ): ViewModel() {
 
-    private val recommendationsFlow = getRecommendationsUseCase()
+    private val postFlow: StateFlow< List<PostData> >
+        get() = invokeGetPostsUseCase()
+
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
 
     private val exceptionHandler = CoroutineExceptionHandler { throwable, _ ->
         Log.e("NewsViewModel", throwable.toString())
     }
 
-    val state = recommendationsFlow
-        .filter { it.isNotEmpty() }
-        .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
-        .onStart { emit(NewsScreenState.Loading) }
-        .mergeWith(updatedStateFlow)
+    val state by lazy {
+        postFlow
+            .filter { it.isNotEmpty() }
+            .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
+            .onStart { emit(NewsScreenState.Loading) }
+            .mergeWith(updatedStateFlow)
+    }
 
-    fun loadNextRecommendations() {
+    fun loadNext() {
         viewModelScope.launch(exceptionHandler) {
             updatedStateFlow.emit(
                 NewsScreenState.Posts(
-                    postList = recommendationsFlow.value,
+                    postList = postFlow.value,
                     nextLoading = true
                 )
             )
-            loadNextPostsUseCase()
+            invokeLoadNextUseCase()
         }
     }
 
     fun removePost(id: Long) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            ignorePostUseCase(id)
+            invokeRemovePostUseCase(id)
         }
     }
 
@@ -61,4 +66,8 @@ class NewsViewModel @Inject constructor(
             changeLikeStatusUseCase(post)
         }
     }
+
+    protected open suspend fun invokeLoadNextUseCase() = loadNextPostsUseCase()
+    protected open suspend fun invokeRemovePostUseCase(id: Long) = ignorePostUseCase(id)
+    protected open fun invokeGetPostsUseCase() = getRecommendationsUseCase()
 }

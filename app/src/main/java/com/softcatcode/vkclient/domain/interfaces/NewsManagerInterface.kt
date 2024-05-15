@@ -14,9 +14,17 @@ interface NewsManagerInterface {
 
     suspend fun checkAuthResult()
 
+    suspend fun loadFavourites()
+
+    suspend fun removeFromFavourites(id: Long)
+
+    suspend fun addToFavourites(post: PostData)
+
     fun getComments(post: PostData): StateFlow<List<Comment>>
 
     fun getRecommendations(): StateFlow<List<PostData>>
 
     fun getAuthStateFlow(): StateFlow<AuthState>
+
+    fun getFavourites(): StateFlow<List<PostData>>
 }

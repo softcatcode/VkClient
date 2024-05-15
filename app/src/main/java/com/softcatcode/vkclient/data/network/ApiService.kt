@@ -1,8 +1,11 @@
 package com.softcatcode.vkclient.data.network
 
-import com.softcatcode.vkclient.data.model.LikeCountResponseDto
-import com.softcatcode.vkclient.data.model.NewsFeedResponseDto
-import com.sumin.vknewsclient.data.model.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.FavouritesResponseDto
+import com.softcatcode.vkclient.data.dtoModels.GetGroupResponse
+import com.softcatcode.vkclient.data.dtoModels.LikeCountResponseDto
+import com.softcatcode.vkclient.data.dtoModels.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.dtoModels.ReturnStatusResponseDto
+import com.softcatcode.vkclient.data.dtoModels.CommentsResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -45,6 +48,33 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("post_id") postId: Long
     ): CommentsResponseDto
+
+    @GET("fave.get?v=$VERSION&item_type=post")
+    suspend fun loadFavourites(
+        @Query("access_token") token: String,
+        @Query("offset") offset: Int,
+        @Query("count") count: Int,
+    ): FavouritesResponseDto
+
+    @GET("fave.removePost?v=$VERSION")
+    suspend fun removeFromFavourites(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("id") postId: Long
+    ): ReturnStatusResponseDto
+
+    @GET("fave.addPost?v=$VERSION")
+    suspend fun addToFavourites(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("id") postId: Long
+    ): ReturnStatusResponseDto
+
+    @GET("groups.getById?v=${VERSION}")
+    suspend fun getGroupById(
+        @Query("access_token") token: String,
+        @Query("group_id") id: Long
+    ): GetGroupResponse
 
     companion object {
         private const val VERSION = "5.199"
