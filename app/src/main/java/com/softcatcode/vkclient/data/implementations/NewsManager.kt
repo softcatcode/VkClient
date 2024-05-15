@@ -1,7 +1,6 @@
 package com.softcatcode.vkclient.data.implementations
 
 import android.app.Application
-import android.util.Log
 import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.domain.entities.Comment
@@ -23,6 +22,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 class NewsManager @Inject constructor(application: Application): NewsManagerInterface {
 
@@ -64,10 +64,6 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
             initialValue = posts
         )
 
-    init {
-        Log.i(this::class.qualifiedName, token())
-    }
-
     private fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 
     private suspend fun loadRecommendations() {
@@ -92,30 +88,32 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
     }
 
     override suspend fun changeLikeStatus(post: PostData) {
-        val newLikeCount = if (post.liked) {
-            Log.i("mumu", "dislike")
+        val newLikeCount = if (post.liked)
             apiService.dislike(token(), post.communityId, post.id).likeCount.count
-        } else {
-            Log.i("mumu", "like")
+        else
             apiService.like(token(), post.communityId, post.id).likeCount.count
-        }
 
-        Log.i("mumu", "flag")
         val newStatistics = post.statistics.toMutableList().apply {
-            removeIf { it.type == StatisticsType.Like }
-            add(StatisticsItem(StatisticsType.Like, newLikeCount))
+            replaceAll {
+                val count = if (it.type == StatisticsType.Like)
+                    newLikeCount
+                else
+                    it.count
+                it.copy(count = count)
+            }
         }
+        updatePostList(_favouritesList, post.id, newStatistics, !post.liked)
+        updatePostList(_posts, post.id, newStatistics, !post.liked)
+        updatedPostListFlow.emit(posts)
+        favouritesListUpdate.emit(favouritesList)
+    }
 
-        _posts.indexOfFirst { post.id == it.id }.let {
-            Log.i("mumu", "recommendations update")
-            _posts[it] = post.copy(statistics = newStatistics, liked = !post.liked)
-            updatedPostListFlow.emit(posts)
-        }
-        _favouritesList.indexOfFirst { post.id == it.id }.let {
-            Log.i("mumu", "favourites update")
-            _favouritesList[it] = post.copy(statistics = newStatistics, liked = !post.liked)
-            favouritesListUpdate.emit(favouritesList)
-            Log.i("mumu", "finished fav update")
+    private fun updatePostList(list: MutableList<PostData>, postId: Long, newStatistics: List<StatisticsItem>, liked: Boolean) {
+        list.replaceAll {
+            if (it.id == postId)
+                it.copy(statistics = newStatistics, liked = liked)
+            else
+                it
         }
     }
 
@@ -163,12 +161,17 @@ class NewsManager @Inject constructor(application: Application): NewsManagerInte
     private var favouritesCount = 0
 
     private suspend fun loadFavouritePosts() {
+        val token = token()
         val response = apiService.loadFavourites(
-            token = token(),
+            token = token,
             offset = favouritesCount,
             count = FAVOURITES_PORTION_SIZE
         )
-        val postList = mapper.mapResponseToFavourites(response)
+        val groups = List(response.content.items.size) {
+            val groupId = response.content.items[it].postDto.communityId.absoluteValue
+            apiService.getGroupById(token, groupId).content.items[0]
+        }
+        val postList = mapper.mapResponseToFavourites(response, groups)
         favouritesCount += postList.size
         _favouritesList.addAll(postList)
         favouritesListUpdate.emit(favouritesList)

@@ -27,8 +27,9 @@ fun NavGraphBuilder.homeScreenNavGraph(
                 }
             )
         ) {
-            val post = it.arguments?.getParcelable<PostData>(Screen.KEY_POST_JSON)
-                ?: throw RuntimeException("Navigation arguments is null")
+            val args = it.arguments ?: throw RuntimeException("Navigation arguments is null")
+            val post = PostData.NavigationType[args, Screen.KEY_POST_JSON] ?:
+                throw RuntimeException("No post in NavBackStackEntry.arguments.")
             commentsScreenContent(post)
         }
     }

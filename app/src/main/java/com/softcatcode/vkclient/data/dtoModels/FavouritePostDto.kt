@@ -1,10 +1,10 @@
-package com.softcatcode.vkclient.data.model
+package com.softcatcode.vkclient.data.dtoModels
 
 import com.google.gson.annotations.SerializedName
 
-data class PostDto(
+data class FavouritePostDto(
     @SerializedName("id") val id: Long,
-    @SerializedName("source_id") val communityId: Long,
+    @SerializedName("from_id") val communityId: Long,
     @SerializedName("text") val text: String,
     @SerializedName("date") val date: Long,
     @SerializedName("likes") val likes: LikesDto,

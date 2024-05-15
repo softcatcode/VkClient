@@ -5,7 +5,7 @@ import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import androidx.navigation.NavType
 import com.google.gson.Gson
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Immutable
 @Parcelize
@@ -24,7 +24,7 @@ data class PostData(
 
         val NavigationType = object: NavType<PostData>(false) {
 
-            override fun get(bundle: Bundle, key: String): PostData? = bundle.getParcelable(key)
+            override fun get(bundle: Bundle, key: String) = bundle.getParcelable(key, PostData::class.java)
 
             override fun parseValue(value: String) = Gson().fromJson(value, PostData::class.java)
 

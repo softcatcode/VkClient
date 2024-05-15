@@ -19,7 +19,7 @@ sealed class Screen(
         fun getPathWithArg(post: PostData): String {
             val postJson = Gson().toJson(post)
             val encodedJson = Uri.encode(postJson)
-            return "$ROUTE_FOR_ARGS/${encodedJson}"
+            return "$ROUTE_FOR_ARGS/$encodedJson"
         }
     }
 
