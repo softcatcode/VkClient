@@ -90,7 +90,7 @@ fun NewsContent(
     paddingValues: PaddingValues,
     onCommentClickListener: (PostData, StatisticsItem) -> Unit
 ) {
-    val component = getApplicationComponent()
+    val component = getApplicationComponent().getRecommendationsScreenComponentFactory().create()
     val viewModel: NewsViewModel = viewModel(factory = component.getViewModelFactory())
     PostsContent(paddingValues, onCommentClickListener, viewModel)
 }
