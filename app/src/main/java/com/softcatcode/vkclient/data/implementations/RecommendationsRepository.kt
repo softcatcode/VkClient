@@ -3,7 +3,6 @@ package com.softcatcode.vkclient.data.implementations
 import android.app.Application
 import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
-import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
@@ -15,8 +14,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
@@ -36,7 +37,6 @@ open class RecommendationsRepository @Inject constructor(application: Applicatio
     protected val _posts = mutableListOf<PostData>()
     private val posts: List<PostData>
         get() = _posts.toList()
-
 
     private val postListRequestFlow = MutableSharedFlow<Unit>(replay = 1)
     private val updatedPostListFlow = MutableSharedFlow<List<PostData>>()
@@ -60,8 +60,10 @@ open class RecommendationsRepository @Inject constructor(application: Applicatio
         )
 
     protected open suspend fun loadPosts() {
-        if (nextFrom == null && posts.isNotEmpty())
+        if (nextFrom == null && posts.isNotEmpty()) {
+            loadCompletedFlow.emit(Unit)
             return
+        }
         val response = nextFrom?.let {
             apiService.getRecommendations(token(), it)
         } ?: apiService.getRecommendations(token())
@@ -102,6 +104,9 @@ open class RecommendationsRepository @Inject constructor(application: Applicatio
         updatePostList(_posts, post.id, newStatistics, !post.liked)
         updatedPostListFlow.emit(posts)
     }
+
+    protected val loadCompletedFlow = MutableSharedFlow<Unit>()
+    override fun getLoadedStatusFlow() = loadCompletedFlow.asSharedFlow()
 
     protected fun token() = token?.accessToken ?: throw RuntimeException("Access token is null.")
 

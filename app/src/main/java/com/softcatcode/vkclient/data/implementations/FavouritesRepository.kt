@@ -21,6 +21,8 @@ class FavouritesRepository @Inject constructor(
             groupResponse.content.items[0]
         }
         _posts.addAll(mapper.mapResponseToFavourites(response, groups))
+        if (postList.size < POST_PORTION_SIZE)
+            loadCompletedFlow.emit(Unit)
     }
 
     override suspend fun deletionRequest(post: PostData) {

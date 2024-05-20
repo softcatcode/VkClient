@@ -1,7 +1,7 @@
 package com.softcatcode.vkclient.domain.interfaces
 
-import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface PostManagerRepository {
@@ -12,4 +12,6 @@ interface PostManagerRepository {
     suspend fun changeLikeStatus(post: PostData)
 
     fun getPosts(): StateFlow<List<PostData>>
+
+    fun getLoadedStatusFlow(): SharedFlow<Unit>
 }

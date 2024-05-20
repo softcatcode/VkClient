@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.useCase.ChangeLikeStatusUseCase
+import com.softcatcode.vkclient.domain.useCase.GetLoadCompletedStatusUseCase
 import com.softcatcode.vkclient.domain.useCase.GetPostsUseCase
 import com.softcatcode.vkclient.domain.useCase.IgnorePostUseCase
 import com.softcatcode.vkclient.domain.useCase.LoadNextPostsUseCase
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,8 +24,25 @@ open class NewsViewModel @Inject constructor(
     private val getPostsUseCase: GetPostsUseCase,
     private val loadNextPostsUseCase: LoadNextPostsUseCase,
     private val ignorePostUseCase: IgnorePostUseCase,
-    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase
+    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase,
+    getLoadCompletedStatusUseCase: GetLoadCompletedStatusUseCase
 ): ViewModel() {
+
+    private var loadingCompleted = false
+
+    init {
+        viewModelScope.launch {
+            getLoadCompletedStatusUseCase().collect {
+                loadingCompleted = true
+                updatedStateFlow.emit(
+                    NewsScreenState.Posts(
+                        postList = postFlow.value,
+                        nextLoading = false
+                    )
+                )
+            }
+        }
+    }
 
     private val postFlow: StateFlow< List<PostData> >
         get() = getPostsUseCase()
@@ -41,11 +58,12 @@ open class NewsViewModel @Inject constructor(
             .filter { it.isNotEmpty() }
             .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
             .onStart { emit(NewsScreenState.Loading) }
-            .onEach { Log.i("mumu", "newList") }
             .mergeWith(updatedStateFlow)
     }
 
     fun loadNext() {
+        if (loadingCompleted)
+            return
         viewModelScope.launch(exceptionHandler) {
             updatedStateFlow.emit(
                 NewsScreenState.Posts(
