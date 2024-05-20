@@ -1,10 +1,13 @@
-package com.softcatcode.vkclient.di
+package com.softcatcode.vkclient.di.modules
 
 import android.content.Context
-import com.softcatcode.vkclient.data.implementations.NewsManager
+import com.softcatcode.vkclient.data.implementations.AuthRepositoryImpl
+import com.softcatcode.vkclient.data.implementations.CommentsRepositoryImpl
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.data.network.ApiService
-import com.softcatcode.vkclient.domain.interfaces.NewsManagerInterface
+import com.softcatcode.vkclient.di.annotations.ApplicationScope
+import com.softcatcode.vkclient.domain.interfaces.AuthRepository
+import com.softcatcode.vkclient.domain.interfaces.CommentsRepository
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import dagger.Binds
 import dagger.Module
@@ -12,10 +15,13 @@ import dagger.Provides
 
 @Module
 interface DataModule {
+    @ApplicationScope
+    @Binds
+    fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 
     @ApplicationScope
     @Binds
-    fun bindNewsManager(impl: NewsManager): NewsManagerInterface
+    fun bindCommentsRepository(impl: CommentsRepositoryImpl): CommentsRepository
 
     companion object {
 

@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.di
+package com.softcatcode.vkclient.di.annotations
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

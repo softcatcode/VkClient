@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.useCase.ChangeLikeStatusUseCase
-import com.softcatcode.vkclient.domain.useCase.GetRecommendationsUseCase
+import com.softcatcode.vkclient.domain.useCase.GetPostsUseCase
 import com.softcatcode.vkclient.domain.useCase.IgnorePostUseCase
 import com.softcatcode.vkclient.domain.useCase.LoadNextPostsUseCase
 import com.softcatcode.vkclient.presentation.extensions.mergeWith
@@ -15,19 +15,20 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 open class NewsViewModel @Inject constructor(
-    private val getRecommendationsUseCase: GetRecommendationsUseCase,
+    private val getPostsUseCase: GetPostsUseCase,
     private val loadNextPostsUseCase: LoadNextPostsUseCase,
     private val ignorePostUseCase: IgnorePostUseCase,
     private val changeLikeStatusUseCase: ChangeLikeStatusUseCase
 ): ViewModel() {
 
     private val postFlow: StateFlow< List<PostData> >
-        get() = invokeGetPostsUseCase()
+        get() = getPostsUseCase()
 
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
 
@@ -40,6 +41,7 @@ open class NewsViewModel @Inject constructor(
             .filter { it.isNotEmpty() }
             .map { NewsScreenState.Posts(postList = it) as NewsScreenState }
             .onStart { emit(NewsScreenState.Loading) }
+            .onEach { Log.i("mumu", "newList") }
             .mergeWith(updatedStateFlow)
     }
 
@@ -51,13 +53,13 @@ open class NewsViewModel @Inject constructor(
                     nextLoading = true
                 )
             )
-            invokeLoadNextUseCase()
+            loadNextPostsUseCase()
         }
     }
 
     fun removePost(id: Long) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            invokeRemovePostUseCase(id)
+            ignorePostUseCase(id)
         }
     }
 
@@ -66,8 +68,4 @@ open class NewsViewModel @Inject constructor(
             changeLikeStatusUseCase(post)
         }
     }
-
-    protected open suspend fun invokeLoadNextUseCase() = loadNextPostsUseCase()
-    protected open suspend fun invokeRemovePostUseCase(id: Long) = ignorePostUseCase(id)
-    protected open fun invokeGetPostsUseCase() = getRecommendationsUseCase()
 }
