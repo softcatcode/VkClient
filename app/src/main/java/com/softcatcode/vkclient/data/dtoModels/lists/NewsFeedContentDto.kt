@@ -1,6 +1,8 @@
-package com.softcatcode.vkclient.data.dtoModels
+package com.softcatcode.vkclient.data.dtoModels.lists
 
 import com.google.gson.annotations.SerializedName
+import com.softcatcode.vkclient.data.dtoModels.entities.GroupDto
+import com.softcatcode.vkclient.data.dtoModels.entities.PostDto
 
 data class NewsFeedContentDto(
     @SerializedName("items") val posts: List<PostDto>,

@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.data.dtoModels
+package com.softcatcode.vkclient.data.dtoModels.statistics
 
 import com.google.gson.annotations.SerializedName
 
