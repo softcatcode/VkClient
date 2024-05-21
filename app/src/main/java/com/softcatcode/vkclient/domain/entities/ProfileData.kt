@@ -7,5 +7,6 @@ data class ProfileData(
     val country: String?,
     val city: String?,
     val friends: List<Friend>,
+    val avatarUrl: String,
     val photoLinks: List<String>
 )

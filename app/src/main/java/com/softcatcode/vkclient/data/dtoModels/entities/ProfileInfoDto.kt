@@ -8,6 +8,6 @@ data class ProfileInfoDto(
     @SerializedName("photo_200") val photoUrl: String,
     @SerializedName("bdate") val birthDate: String,
     @SerializedName("first_name") val name: String,
-    @SerializedName("second_name") val secondName: String,
+    @SerializedName("last_name") val lastName: String,
     @SerializedName("country") val country: LocationNameDto
 )

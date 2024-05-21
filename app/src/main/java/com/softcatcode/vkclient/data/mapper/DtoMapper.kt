@@ -1,15 +1,20 @@
 package com.softcatcode.vkclient.data.mapper
 
-import com.softcatcode.vkclient.data.dtoModels.FavouritePostDto
-import com.softcatcode.vkclient.data.dtoModels.FavouritesResponseDto
-import com.softcatcode.vkclient.data.dtoModels.GroupDto
-import com.softcatcode.vkclient.data.dtoModels.NewsFeedResponseDto
-import com.softcatcode.vkclient.data.dtoModels.PostDto
+import com.softcatcode.vkclient.data.dtoModels.entities.FavouritePostDto
+import com.softcatcode.vkclient.data.dtoModels.responses.FavouritesResponseDto
+import com.softcatcode.vkclient.data.dtoModels.entities.GroupDto
+import com.softcatcode.vkclient.data.dtoModels.responses.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.dtoModels.entities.PostDto
 import com.softcatcode.vkclient.domain.entities.Comment
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
-import com.softcatcode.vkclient.data.dtoModels.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.GetFriendsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.GetPhotosResponse
+import com.softcatcode.vkclient.data.dtoModels.responses.GetProfileInfoResponse
+import com.softcatcode.vkclient.domain.entities.Friend
+import com.softcatcode.vkclient.domain.entities.ProfileData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -98,4 +103,33 @@ class DtoMapper {
                 groups?.find { it.id == favouriteItem.postDto.communityId.absoluteValue }
             )
         }
+
+    private fun mapResponseToFriends(model: GetFriendsResponseDto) = model.friends.items.map {
+        Friend(
+            id = it.id,
+            name = it.name,
+            lastName = it.lastName,
+            online = it.online == 1,
+            avatarUrl = it.photoUrl
+        )
+    }
+
+    fun mapResponseToProfile(
+        model: GetProfileInfoResponse,
+        photosResponse: GetPhotosResponse,
+        friendsResponse: GetFriendsResponseDto
+    ): ProfileData = with(model.data) {
+        ProfileData(
+            id = id,
+            name = name,
+            lastName = lastName,
+            country = country.name,
+            city = city,
+            avatarUrl = photoUrl,
+            friends = mapResponseToFriends(friendsResponse),
+            photoLinks = photosResponse.data.items.map {
+                it.links.find { elem -> elem.type == "o" }!!.url
+            }
+        )
+    }
 }
