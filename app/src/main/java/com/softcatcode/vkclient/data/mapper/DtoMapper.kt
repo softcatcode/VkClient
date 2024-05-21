@@ -18,9 +18,10 @@ import com.softcatcode.vkclient.domain.entities.ProfileData
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class DtoMapper {
+class DtoMapper @Inject constructor() {
 
     private fun mapPostDtoToEntity(model: PostDto, group: GroupDto?) = with (model) {
         PostData(

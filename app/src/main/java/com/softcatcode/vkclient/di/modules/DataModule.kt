@@ -1,5 +1,6 @@
 package com.softcatcode.vkclient.di.modules
 
+import android.app.Application
 import android.content.Context
 import com.softcatcode.vkclient.data.implementations.AuthRepositoryImpl
 import com.softcatcode.vkclient.data.implementations.CommentsRepositoryImpl
@@ -29,6 +30,12 @@ interface DataModule {
         @Provides
         fun provideApiService(): ApiService {
             return ApiFactory.apiService
+        }
+
+        @ApplicationScope
+        @Provides
+        fun provideStorage(application: Application): VKPreferencesKeyValueStorage {
+            return VKPreferencesKeyValueStorage(application)
         }
 
         @ApplicationScope

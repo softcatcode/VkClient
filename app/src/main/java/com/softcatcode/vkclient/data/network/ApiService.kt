@@ -87,10 +87,10 @@ interface ApiService {
     @GET("photos.getAll?v=${VERSION}")
     suspend fun getPhotos(
         @Query("access_token") token: String,
-        @Query("owner_id") profileId: String
+        @Query("owner_id") profileId: Long
     ): GetPhotosResponse
 
-    @GET("account.getProfileInfo?v-${VERSION}")
+    @GET("account.getProfileInfo?v=${VERSION}")
     suspend fun getProfileInfo(
         @Query("access_token") token: String
     ): GetProfileInfoResponse

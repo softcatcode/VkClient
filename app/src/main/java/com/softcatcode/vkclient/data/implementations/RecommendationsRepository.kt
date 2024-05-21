@@ -1,9 +1,8 @@
 package com.softcatcode.vkclient.data.implementations
 
-import android.app.Application
 import android.util.Log
 import com.softcatcode.vkclient.data.mapper.DtoMapper
-import com.softcatcode.vkclient.data.network.ApiFactory
+import com.softcatcode.vkclient.data.network.ApiService
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
@@ -15,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -24,11 +22,12 @@ import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-open class RecommendationsRepository @Inject constructor(application: Application): PostManagerRepository {
+open class RecommendationsRepository @Inject constructor(
+    private val storage: VKPreferencesKeyValueStorage,
+    private val apiService: ApiService,
+    private val mapper: DtoMapper
+): PostManagerRepository {
 
-    private val storage = VKPreferencesKeyValueStorage(application)
-    protected val apiService = ApiFactory.apiService
-    protected val mapper = DtoMapper()
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private var nextFrom: String? = null
 
