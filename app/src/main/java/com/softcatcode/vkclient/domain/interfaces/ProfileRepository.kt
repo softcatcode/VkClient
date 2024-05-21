@@ -7,5 +7,5 @@ interface ProfileRepository {
 
     suspend fun loadProfile()
 
-    fun getProfileDataFlow(): StateFlow<ProfileData?>
+    fun getProfileDataFlow(): StateFlow<ProfileData>
 }

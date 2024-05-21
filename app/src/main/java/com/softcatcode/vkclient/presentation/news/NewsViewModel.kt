@@ -50,7 +50,7 @@ open class NewsViewModel @Inject constructor(
     private val updatedStateFlow = MutableSharedFlow<NewsScreenState>()
 
     private val exceptionHandler = CoroutineExceptionHandler { throwable, _ ->
-        Log.e("NewsViewModel", throwable.toString())
+        Log.e(this::class.simpleName, throwable.toString())
     }
 
     val state by lazy {
