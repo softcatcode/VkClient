@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home.comments
+package com.softcatcode.vkclient.presentation.comments
 
 import androidx.lifecycle.ViewModel
 import com.softcatcode.vkclient.domain.entities.PostData

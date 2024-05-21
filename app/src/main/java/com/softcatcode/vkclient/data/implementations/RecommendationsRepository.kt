@@ -1,6 +1,7 @@
 package com.softcatcode.vkclient.data.implementations
 
 import android.app.Application
+import android.util.Log
 import com.softcatcode.vkclient.data.mapper.DtoMapper
 import com.softcatcode.vkclient.data.network.ApiFactory
 import com.softcatcode.vkclient.domain.entities.PostData
@@ -30,6 +31,10 @@ open class RecommendationsRepository @Inject constructor(application: Applicatio
     protected val mapper = DtoMapper()
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private var nextFrom: String? = null
+
+    init {
+        Log.i("mumu", token())
+    }
 
     private val token
         get() = VKAccessToken.restore(storage)

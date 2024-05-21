@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home.news
+package com.softcatcode.vkclient.presentation.news
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

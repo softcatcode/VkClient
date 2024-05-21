@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home
+package com.softcatcode.vkclient.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder

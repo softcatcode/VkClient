@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home.news
+package com.softcatcode.vkclient.presentation.news
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background

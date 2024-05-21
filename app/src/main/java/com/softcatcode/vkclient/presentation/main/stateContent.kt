@@ -1,4 +1,4 @@
-package com.softcatcode.vkclient.presentation.home
+package com.softcatcode.vkclient.presentation.main
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -19,9 +19,9 @@ import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.domain.entities.StatisticsType
 import com.softcatcode.vkclient.presentation.extensions.ProgressBar
 import com.softcatcode.vkclient.presentation.extensions.getApplicationComponent
-import com.softcatcode.vkclient.presentation.home.news.NewsScreenState
-import com.softcatcode.vkclient.presentation.home.news.PostList
-import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
+import com.softcatcode.vkclient.presentation.news.NewsScreenState
+import com.softcatcode.vkclient.presentation.news.PostList
+import com.softcatcode.vkclient.presentation.news.NewsViewModel
 
 @Composable
 fun RowScope.BottomNavigationItem(
@@ -62,7 +62,7 @@ fun PostsContent(
     onCommentClickListener: (PostData, StatisticsItem) -> Unit,
     viewModel: NewsViewModel
 ) {
-    val state = viewModel.state.collectAsState(HomeScreenState.Initial)
+    val state = viewModel.state.collectAsState(NewsScreenState.Initial)
 
     when (val currentState = state.value) {
 
@@ -82,6 +82,8 @@ fun PostsContent(
         is NewsScreenState.Loading -> {
             ProgressBar()
         }
+
+        NewsScreenState.Initial -> {}
     }
 }
 
