@@ -12,11 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.softcatcode.vkclient.presentation.favourites.FavouritesContent
-import com.softcatcode.vkclient.presentation.home.BottomNavigationItem
-import com.softcatcode.vkclient.presentation.home.NewsContent
 import com.softcatcode.vkclient.presentation.navigation.AppNavGraph
 import com.softcatcode.vkclient.presentation.navigation.NavigationState
-import com.softcatcode.vkclient.presentation.home.comments.CommentScreen
+import com.softcatcode.vkclient.presentation.comments.CommentScreen
+import com.softcatcode.vkclient.presentation.profile.Profile
 
 @Composable
 fun VkBottomNavigationBar(navState: NavigationState) {
@@ -72,7 +71,9 @@ fun VkMainScreen() {
                     navState.navigateToComments(post)
                 }
             },
-            profileScreenContent = {  }
+            profileScreenContent = {
+                Profile()
+            }
         )
     }
 }

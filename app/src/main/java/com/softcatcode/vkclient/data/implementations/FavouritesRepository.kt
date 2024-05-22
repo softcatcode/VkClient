@@ -1,13 +1,17 @@
 package com.softcatcode.vkclient.data.implementations
 
-import android.app.Application
+import com.softcatcode.vkclient.data.mapper.DtoMapper
+import com.softcatcode.vkclient.data.network.ApiService
 import com.softcatcode.vkclient.domain.entities.PostData
+import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 class FavouritesRepository @Inject constructor(
-    application: Application
-): RecommendationsRepository(application) {
+    storage: VKPreferencesKeyValueStorage,
+    private val apiService: ApiService,
+    private val mapper: DtoMapper
+): RecommendationsRepository(storage, apiService, mapper) {
 
     private var loadedCount = 0
 

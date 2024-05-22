@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.softcatcode.vkclient.domain.entities.PostData
-import com.softcatcode.vkclient.presentation.home.homeScreenNavGraph
 
 @Composable
 fun AppNavGraph(

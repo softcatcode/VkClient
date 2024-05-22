@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.softcatcode.vkclient.data.implementations.FavouritesRepository
 import com.softcatcode.vkclient.di.annotations.ViewModelKey
 import com.softcatcode.vkclient.domain.interfaces.PostManagerRepository
-import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
+import com.softcatcode.vkclient.presentation.news.NewsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

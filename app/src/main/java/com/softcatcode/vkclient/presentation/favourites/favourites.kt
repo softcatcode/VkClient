@@ -6,8 +6,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.softcatcode.vkclient.domain.entities.PostData
 import com.softcatcode.vkclient.domain.entities.StatisticsItem
 import com.softcatcode.vkclient.presentation.extensions.getApplicationComponent
-import com.softcatcode.vkclient.presentation.home.PostsContent
-import com.softcatcode.vkclient.presentation.home.news.NewsViewModel
+import com.softcatcode.vkclient.presentation.main.PostsContent
+import com.softcatcode.vkclient.presentation.news.NewsViewModel
 
 @Composable
 fun FavouritesContent(

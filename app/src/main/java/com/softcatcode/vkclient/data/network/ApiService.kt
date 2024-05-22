@@ -1,11 +1,14 @@
 package com.softcatcode.vkclient.data.network
 
-import com.softcatcode.vkclient.data.dtoModels.FavouritesResponseDto
-import com.softcatcode.vkclient.data.dtoModels.GetGroupResponse
-import com.softcatcode.vkclient.data.dtoModels.LikeCountResponseDto
-import com.softcatcode.vkclient.data.dtoModels.NewsFeedResponseDto
-import com.softcatcode.vkclient.data.dtoModels.ReturnStatusResponseDto
-import com.softcatcode.vkclient.data.dtoModels.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.FavouritesResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.GetGroupResponse
+import com.softcatcode.vkclient.data.dtoModels.responses.LikeCountResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.NewsFeedResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.ReturnStatusResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.CommentsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.GetFriendsResponseDto
+import com.softcatcode.vkclient.data.dtoModels.responses.GetPhotosResponse
+import com.softcatcode.vkclient.data.dtoModels.responses.GetProfileInfoResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -75,6 +78,22 @@ interface ApiService {
         @Query("access_token") token: String,
         @Query("group_id") id: Long
     ): GetGroupResponse
+
+    @GET("friends.get?v=${VERSION}&fields=photo_100,city,online")
+    suspend fun getFriends(
+        @Query("access_token") token: String
+    ): GetFriendsResponseDto
+
+    @GET("photos.getAll?v=${VERSION}")
+    suspend fun getPhotos(
+        @Query("access_token") token: String,
+        @Query("owner_id") profileId: Long
+    ): GetPhotosResponse
+
+    @GET("account.getProfileInfo?v=${VERSION}")
+    suspend fun getProfileInfo(
+        @Query("access_token") token: String
+    ): GetProfileInfoResponse
 
     companion object {
         private const val VERSION = "5.199"
