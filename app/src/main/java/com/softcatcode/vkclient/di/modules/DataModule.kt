@@ -1,7 +1,6 @@
 package com.softcatcode.vkclient.di.modules
 
 import android.app.Application
-import android.content.Context
 import com.softcatcode.vkclient.data.implementations.AuthRepositoryImpl
 import com.softcatcode.vkclient.data.implementations.CommentsRepositoryImpl
 import com.softcatcode.vkclient.data.implementations.ProfileRepositoryImpl
@@ -40,16 +39,10 @@ interface DataModule {
 
         @ApplicationScope
         @Provides
-        fun provideStorage(application: Application): VKPreferencesKeyValueStorage {
-            return VKPreferencesKeyValueStorage(application)
-        }
-
-        @ApplicationScope
-        @Provides
         fun provideVkStorage(
-            context: Context
+            application: Application
         ): VKPreferencesKeyValueStorage {
-            return VKPreferencesKeyValueStorage(context)
+            return VKPreferencesKeyValueStorage(application)
         }
     }
 }

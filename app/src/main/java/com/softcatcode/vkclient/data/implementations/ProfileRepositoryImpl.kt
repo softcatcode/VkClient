@@ -22,9 +22,7 @@ class ProfileRepositoryImpl @Inject constructor(
     private val mapper: DtoMapper
 ): ProfileRepository {
 
-    private var _profile: ProfileData? = null
-    private val profile: ProfileData
-        get() = _profile ?: throw RuntimeException("ProfileData is null.")
+    private var profile = ProfileData.INITIAL_DATA
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val token
@@ -38,7 +36,7 @@ class ProfileRepositoryImpl @Inject constructor(
             loadProfileData()
             emit(profile)
         }
-    }.retry {
+    }.retry(1) {
         delay(RETRY_TIMEOUT_MILLIS)
         true
     }
@@ -47,7 +45,7 @@ class ProfileRepositoryImpl @Inject constructor(
         val infoResponse = apiService.getProfileInfo(token)
         val friendsResponse = apiService.getFriends(token)
         val photosResponse = apiService.getPhotos(token, infoResponse.data.id)
-        _profile = mapper.mapResponseToProfile(infoResponse, photosResponse, friendsResponse)
+        profile = mapper.mapResponseToProfile(infoResponse, photosResponse, friendsResponse)
     }
 
     override suspend fun loadProfile() = loadProfileRequest.emit(Unit)

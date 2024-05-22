@@ -15,6 +15,7 @@ import com.softcatcode.vkclient.presentation.favourites.FavouritesContent
 import com.softcatcode.vkclient.presentation.navigation.AppNavGraph
 import com.softcatcode.vkclient.presentation.navigation.NavigationState
 import com.softcatcode.vkclient.presentation.comments.CommentScreen
+import com.softcatcode.vkclient.presentation.profile.Profile
 
 @Composable
 fun VkBottomNavigationBar(navState: NavigationState) {
@@ -70,7 +71,9 @@ fun VkMainScreen() {
                     navState.navigateToComments(post)
                 }
             },
-            profileScreenContent = {  }
+            profileScreenContent = {
+                Profile()
+            }
         )
     }
 }

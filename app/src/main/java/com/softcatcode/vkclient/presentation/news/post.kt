@@ -54,50 +54,59 @@ import com.softcatcode.vkclient.presentation.ui.theme.DarkBlue
 import com.softcatcode.vkclient.presentation.ui.theme.DarkRed
 
 @Composable
+fun IconWithTextAndHint(model: String, label: String, hint: String) {
+    Row(
+        modifier = Modifier.padding(2.dp).fillMaxHeight(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxHeight(0.75f)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.background),
+            model = model,
+            contentDescription = "",
+            contentScale = ContentScale.Fit
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(
+                modifier = Modifier,
+                text = label,
+                color = MaterialTheme.colorScheme.onPrimary,
+                fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                modifier = Modifier,
+                text = hint,
+                color = MaterialTheme.colorScheme.onSecondary,
+                fontSize = 14.sp
+            )
+        }
+        Icon(
+            imageVector = Icons.Rounded.MoreVert,
+            contentDescription = "",
+            modifier = Modifier,
+            tint = MaterialTheme.colorScheme.onSecondary
+        )
+    }
+}
+
+@Composable
 private fun VkProfileCard(modifier: Modifier = Modifier, post: PostData, cornerRadius: Dp = 0.dp) {
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         shape = RoundedCornerShape(cornerRadius)
     ) {
-        Row(
-            modifier = Modifier.padding(2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxHeight(0.75f)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background),
-                model = post.avatarUrl,
-                contentDescription = "",
-                contentScale = ContentScale.Fit
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = post.communityName,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontSize = 20.sp
-                )
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(
-                    modifier = Modifier,
-                    text = post.publicationDate,
-                    color = MaterialTheme.colorScheme.onSecondary,
-                    fontSize = 14.sp
-                )
-            }
-            Icon(
-                imageVector = Icons.Rounded.MoreVert,
-                contentDescription = "",
-                modifier = Modifier,
-                tint = MaterialTheme.colorScheme.onSecondary
-            )
-        }
+        IconWithTextAndHint(
+            model = post.avatarUrl,
+            label = post.communityName,
+            hint = post.publicationDate
+        )
     }
 }
 

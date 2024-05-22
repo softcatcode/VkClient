@@ -16,6 +16,7 @@ import com.softcatcode.vkclient.data.dtoModels.responses.GetProfileInfoResponse
 import com.softcatcode.vkclient.domain.entities.Friend
 import com.softcatcode.vkclient.domain.entities.ProfileData
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -64,6 +65,22 @@ class DtoMapper @Inject constructor() {
     private fun mapLongToDate(seconds: Long): String {
         val date = Date(seconds * 1000)
         return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(date)
+    }
+
+    private fun mapDateToAge(date: String): Int {
+        val i = date.indexOf('.')
+        val j = date.lastIndexOf('.')
+        val day = date.substring(0, i).toInt()
+        val month = date.substring(i + 1, j).toInt()
+        val year = date.substring(j + 1).toInt()
+        val currentTime = Calendar.getInstance()
+        val currentYear = currentTime.get(Calendar.YEAR)
+        val currentMonth = currentTime.get(Calendar.MONTH)
+        val currentDay = currentTime.get(Calendar.DAY_OF_MONTH)
+        var result = currentYear - year
+        if (currentMonth < month || currentMonth == month && currentDay < day)
+            result--
+        return result
     }
 
     fun mapResponseToPosts(responseDto: NewsFeedResponseDto): List<PostData> {
@@ -123,6 +140,7 @@ class DtoMapper @Inject constructor() {
         ProfileData(
             id = id,
             name = name,
+            age = mapDateToAge(birthDate),
             lastName = lastName,
             country = country.name,
             city = city,
